@@ -29,7 +29,7 @@ namespace ExcelDNAtest.Classi
 
         private static ApplicationSettings? _current;
         // Oggetto di blocco per evitare problemi se due thread salvano contemporaneamente
-        private static readonly object LockObject = new object();
+        private static readonly Lock LockObject = new();
 
 
         /// <summary>
@@ -40,10 +40,7 @@ namespace ExcelDNAtest.Classi
             get
             {
                 // Se non è ancora stata caricata, la carichiamo la prima volta (Lazy Loading)
-                if (_current == null)
-                {
-                    _current = Load();
-                }
+                _current ??= Load();
                 return _current;
             }
         }

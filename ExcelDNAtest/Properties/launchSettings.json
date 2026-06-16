@@ -4,12 +4,6 @@
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
       "commandLineArgs": "/x \"ExcelDNAtest-AddIn64.xll\""
-    },
-    "AOT": {
-      "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
-      "commandLineArgs": "/x \"$(TargetDir)publish\\$(TargetName)-Addin64.xll\"",
-      "debugEngines": "native"
     }
   }
 }

@@ -35,7 +35,7 @@ namespace ExcelDNAtest
             if (reference == null) return string.Empty;
             string fullPath = (string)XlCall.Excel(XlCall.xlSheetNm, reference);
             int index = fullPath.LastIndexOf(']');
-            return index >= 0 ? fullPath.Substring(index + 1) : fullPath;
+            return index >= 0 ? fullPath[(index + 1)..] : fullPath;
         }
 
         internal static ExcelRangeTarget ToRange(ExcelReference reference)
@@ -47,12 +47,12 @@ namespace ExcelDNAtest
 
 #if AOT
             var sheets = (IDynamic)xlApp.Get("Sheets");
-            var ws = (IDynamic)sheets.Get("Item", new object[] { sheetName });
+            var ws = (IDynamic)sheets.Get("Item", [sheetName]);
 
-            var cellaInizio = (IDynamic)ws.Get("Cells", new object[] { reference.RowFirst + 1, reference.ColumnFirst + 1 });
-            var cellaFine = (IDynamic)ws.Get("Cells", new object[] { reference.RowLast + 1, reference.ColumnLast + 1 });
+            var cellaInizio = (IDynamic)ws.Get("Cells", [reference.RowFirst + 1, reference.ColumnFirst + 1]);
+            var cellaFine = (IDynamic)ws.Get("Cells", [reference.RowLast + 1, reference.ColumnLast + 1]);
 
-            return (ExcelRangeTarget)xlApp.Get("Range", new object[] { cellaInizio, cellaFine });
+            return (ExcelRangeTarget)xlApp.Get("Range", [cellaInizio, cellaFine]);
 #else
             Microsoft.Office.Interop.Excel.Worksheet ws = (Microsoft.Office.Interop.Excel.Worksheet)xlApp.Sheets[sheetName];
             Microsoft.Office.Interop.Excel.Range cellaInizio = (Microsoft.Office.Interop.Excel.Range)ws.Cells[reference.RowFirst + 1, reference.ColumnFirst + 1];
