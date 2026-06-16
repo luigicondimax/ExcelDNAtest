@@ -48,7 +48,7 @@
 
 	<Target Name="AutoPublishAot" AfterTargets="Build" Condition="'$(Configuration)' == 'ReleaseAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
 		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso (fase completa)..." />
-		<Exec Command="dotnet publish -c releaseAOT /p:IsPublishing=true" />
+		<Exec Command="dotnet publish -c ReleaseAOT /p:IsPublishing=true /p:NoBuild=true" />
 	</Target>
 
 	<ItemGroup>

@@ -48,7 +48,6 @@ namespace ExcelDNAtest
 
             // Questo dice ad Avalonia cosa mostrare graficamente senza usare la riflessione
             public override string ToString() => Etichetta;
-
         }
 
         internal static void InizializzaComboBoxLingua(Avalonia.Controls.ComboBox comboBox)
