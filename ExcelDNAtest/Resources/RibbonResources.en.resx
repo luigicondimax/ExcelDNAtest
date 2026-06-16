@@ -117,10 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Lingua aggiornata" xml:space="preserve">
-    <value>Lingua aggiornata</value>
-  </data>
-  <data name="Riavviare Excel per aggiornare la lingua delle funzioni" xml:space="preserve">
-    <value>Riavviare Excel per aggiornare la lingua</value>
+  <data name="Apri la form" xml:space="preserve">
+    <value>Open form</value>
   </data>
 </root>

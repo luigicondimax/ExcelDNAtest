@@ -1,6 +1,7 @@
 <Solution>
   <Configurations>
     <BuildType Name="Debug" />
+    <BuildType Name="DebugAOT" />
     <BuildType Name="Release" />
     <BuildType Name="ReleaseAOT" />
   </Configurations>

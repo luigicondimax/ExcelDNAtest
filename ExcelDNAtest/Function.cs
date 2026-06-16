@@ -2,7 +2,7 @@
 
 namespace ExcelDNAtest
 {
-    public class Funzioni
+    public class Function
     {
         [ExcelFunction]
         public static string Hello()

@@ -1,4 +1,4 @@
-﻿#if RELEASEAOT
+﻿#if AOT
 global using ExcelAppTarget = ExcelDna.Integration.IDynamic;
 global using ExcelWorkbookTarget = ExcelDna.Integration.IDynamic;
 global using ExcelWorksheetTarget = ExcelDna.Integration.IDynamic;
@@ -45,7 +45,7 @@ namespace ExcelDNAtest
             ExcelAppTarget xlApp = ActiveApplication();
             string sheetName = GetSheetName(reference);
 
-#if RELEASEAOT
+#if AOT
             var sheets = (IDynamic)xlApp.Get("Sheets");
             var ws = (IDynamic)sheets.Get("Item", new object[] { sheetName });
 
@@ -62,13 +62,10 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // =================================================================
-        // METODI DI ACCESSO AGLI OGGETTI (INTEROP / AOT COMPATIBILI)
-        // =================================================================
 
         internal static ExcelAppTarget ActiveApplication()
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelAppTarget)ExcelDnaUtil.DynamicApplication;
 #else
             return (ExcelAppTarget)ExcelDnaUtil.Application;
@@ -78,7 +75,7 @@ namespace ExcelDNAtest
 
         internal static ExcelWorksheetTarget ActiveSheet()
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelWorksheetTarget)ActiveApplication().Get("ActiveSheet");
 #else
             return ActiveApplication().ActiveSheet;
@@ -87,7 +84,7 @@ namespace ExcelDNAtest
 
         internal static ExcelWorkbookTarget ActiveWorkbook()
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelWorkbookTarget)ActiveApplication().Get("ActiveWorkbook");
 #else
             return ActiveApplication().ActiveWorkbook;
@@ -96,7 +93,7 @@ namespace ExcelDNAtest
 
         internal static ExcelRangeTarget ActiveCell()
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelRangeTarget)ActiveApplication().Get("ActiveCell");
 #else
             return ActiveApplication().ActiveCell;
@@ -105,7 +102,7 @@ namespace ExcelDNAtest
 
         internal static ExcelRangeTarget Range(string indirizzo)
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelRangeTarget)ActiveApplication().Get("Range", new object[] { indirizzo });
 #else
             return ActiveApplication().Range[indirizzo];
@@ -114,7 +111,7 @@ namespace ExcelDNAtest
 
         internal static ExcelChartTarget ActiveChart()
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelChartTarget)ActiveApplication().Get("ActiveChart");
 #else
             return ActiveApplication().ActiveChart;
@@ -123,7 +120,7 @@ namespace ExcelDNAtest
 
         internal static object Evaluate(string espressione)
         {
-#if RELEASEAOT
+#if AOT
             return ActiveApplication().Invoke("Evaluate", new object[] { espressione });
 #else
             return ActiveApplication().Evaluate(espressione);
@@ -133,7 +130,7 @@ namespace ExcelDNAtest
         internal static bool TryGetSelectionAsRange(out ExcelRangeTarget selection)
         {
             var app = ActiveApplication();
-#if RELEASEAOT
+#if AOT
             var sel = app.Get("Selection");
 
             if (sel != null && (string)app.Invoke("TypeName", new object[] { sel }) == "Range")
@@ -154,9 +151,7 @@ namespace ExcelDNAtest
 
         internal static void SetScreenUpdating(bool enable)
         {
-#if RELEASEAOT
-            // Per il metodo .Set() di proprietà dirette, di solito basta il valore, 
-            // ma se la firma richiede indicizzazione vuota si usa la sintassi standard:
+#if AOT
             ActiveApplication().Set("ScreenUpdating", enable);
 #else
             ActiveApplication().ScreenUpdating = enable;
@@ -165,7 +160,7 @@ namespace ExcelDNAtest
 
     }
 
-#if RELEASEAOT
+#if AOT
     internal enum XlChartType { xlXYScatterSmoothNoMarkers = 73 }
     internal enum XlSheetVisibility { xlSheetVisible = -1 }
     internal enum XlFixedFormatType { xlTypePDF = 0 }
@@ -175,14 +170,11 @@ namespace ExcelDNAtest
     internal enum XlFixedFormatType { xlTypePDF = Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF }
 #endif
 
-    // =================================================================
-    // METODI DI ESTENSIONE
-    // =================================================================
     internal static class ExcelExtensions
     {
         internal static object GetValue(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return range.Get("Value");
 #else
             return range.Value;
@@ -191,7 +183,7 @@ namespace ExcelDNAtest
 
         internal static void SetValue(this ExcelRangeTarget range, object value)
         {
-#if RELEASEAOT
+#if AOT
             range.Set("Value", value);
 #else
             range.Value = value;
@@ -200,7 +192,7 @@ namespace ExcelDNAtest
 
         internal static string GetText(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return (string)range.Get("Text");
 #else
             return range.Text;
@@ -209,27 +201,23 @@ namespace ExcelDNAtest
 
         internal static void SetNumberFormat(this ExcelRangeTarget range, string format)
         {
-#if RELEASEAOT
+#if AOT
             range.Set("NumberFormat", format);
 #else
             range.NumberFormat = format;
 #endif
         }
-
-        // Lettura della Formula della cella
         internal static string GetFormula(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return range.Get("Formula")?.ToString() ?? string.Empty;
 #else
         return range.Formula?.ToString() ?? string.Empty;
 #endif
         }
-
-        // Scrittura della Formula della cella
         internal static void SetFormula(this ExcelRangeTarget range, object formula)
         {
-#if RELEASEAOT
+#if AOT
             range.Set("Formula", formula);
 #else
             range.Formula = formula;
@@ -237,7 +225,7 @@ namespace ExcelDNAtest
         }
         internal static string GetAddress(this ExcelRangeTarget range, bool external = false)
         {
-#if RELEASEAOT
+#if AOT
             // I parametri posizionali di Excel per Address sono:
             // 1. RowAbsolute (true)
             // 2. ColumnAbsolute (true)
@@ -252,10 +240,9 @@ namespace ExcelDNAtest
         internal static object InputBox(string prompt, string title, object? defaultValue = null,
             XlInputBoxDataType type = XlInputBoxDataType.Text)
         {
-            // Risolviamo il valore di default a tempo di esecuzione
             object finalDefault = defaultValue ?? Type.Missing;
 
-#if RELEASEAOT
+#if AOT
             return ExcelUtil.ActiveApplication().Invoke("InputBox", new object[]
             {
                 prompt,
@@ -275,7 +262,6 @@ namespace ExcelDNAtest
 
         internal static double? OttieniNumeroDaInputBox(string prompt, string title)
         {
-            // Sfruttiamo i parametri nominali di C# per saltare il defaultValue che è null
             object risultato = InputBox(prompt, title, type: XlInputBoxDataType.Number);
 
             // Se l'utente preme Annulla, Excel restituisce il bool false
@@ -305,17 +291,16 @@ namespace ExcelDNAtest
 
         internal static ExcelRangeTarget GetOffset(this ExcelRangeTarget range, int rowOffset, int columnOffset)
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelRangeTarget)range.Get("Offset", new object[] { rowOffset, columnOffset });
 #else
         return range.Offset[rowOffset, columnOffset];
 #endif
         }
 
-        // Lettura e Scrittura dello Style
         internal static object GetStyle(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return range.Get("Style");
 #else
         return range.Style;
@@ -324,67 +309,61 @@ namespace ExcelDNAtest
 
         internal static void SetStyle(this ExcelRangeTarget range, object style)
         {
-#if RELEASEAOT
+#if AOT
             range.Set("Style", style);
 #else
         range.Style = style;
 #endif
         }
 
-        // Lettura del NumberFormat (la scrittura l'avevamo già fatta!)
         internal static string GetNumberFormat(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return (string)range.Get("NumberFormat");
 #else
         return range.NumberFormat?.ToString() ?? "";
 #endif
         }
 
-        // Recupera il Foglio di lavoro (Parent) da un Range
         internal static ExcelWorksheetTarget GetParent(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelWorksheetTarget)range.Get("Parent");
 #else
         return (ExcelWorksheetTarget)range.Parent;
 #endif
         }
 
-        // Nome del foglio di lavoro
         internal static string GetName(this ExcelWorksheetTarget sheet)
         {
-#if RELEASEAOT
+#if AOT
             return (string)sheet.Get("Name");
 #else
         return sheet.Name;
 #endif
         }
 
-        // Attivazione del foglio
         internal static void Activate(this ExcelWorksheetTarget sheet)
         {
-#if RELEASEAOT
+#if AOT
             sheet.Invoke("Activate", Array.Empty<object>());
 #else
             sheet.Activate();
 #endif
         }
 
-        // Selezione del Range
         internal static void Select(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             range.Invoke("Select", Array.Empty<object>());
 #else
         range.Select();
 #endif
         }
 
-        // Creazione di un grafico sul foglio corrente
         internal static ExcelChartTarget AddChart(this ExcelWorksheetTarget sheet, XlChartType chartType)
         {
-#if RELEASEAOT
+#if AOT
             var shapes = (IDynamic)sheet.Get("Shapes");
             var chartShape = (IDynamic)shapes.Invoke("AddChart", new object[] { (int)chartType });
             return (ExcelChartTarget)chartShape.Get("Chart");
@@ -396,10 +375,9 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Svuota in sicurezza tutte le serie esistenti di un grafico
         internal static void ClearSeries(this ExcelChartTarget chart)
         {
-#if RELEASEAOT
+#if AOT
             var seriesCollection = (IDynamic)chart.Invoke("SeriesCollection", Array.Empty<object>());
             int count = (int)seriesCollection.Get("Count");
             // Loop al contrario per evitare disallineamenti di indice durante l'eliminazione
@@ -417,10 +395,9 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Aggiunge una nuova serie al grafico usando formule stringa
         internal static void AddSeries(this ExcelChartTarget chart, string nameFormula, string xValuesFormula, string valuesFormula)
         {
-#if RELEASEAOT
+#if AOT
             var seriesCollection = (IDynamic)chart.Invoke("SeriesCollection", Array.Empty<object>());
             var nuovaSerie = (IDynamic)seriesCollection.Invoke("NewSeries", Array.Empty<object>());
             nuovaSerie.Set("Name", nameFormula);
@@ -435,7 +412,7 @@ namespace ExcelDNAtest
 #endif
         }
 
-#if RELEASEAOT
+#if AOT
         // =================================================================
         // MODALITÀ NATIVE AOT
         // =================================================================
@@ -462,49 +439,44 @@ namespace ExcelDNAtest
     }
 #endif
 
-        // Cancella i commenti dal Range
         internal static void ClearComments(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             range.Invoke("ClearComments", Array.Empty<object>());
 #else
         range.ClearComments();
 #endif
         }
 
-        // Aggiunge un commento al Range
         internal static void AddComment(this ExcelRangeTarget range, string text)
         {
-#if RELEASEAOT
+#if AOT
             range.Invoke("AddComment", new object[] { text });
 #else
         range.AddComment(text);
 #endif
         }
-        // Gestione DisplayAlerts della Application
         internal static void SetDisplayAlerts(this ExcelAppTarget app, bool value)
         {
-#if RELEASEAOT
+#if AOT
             app.Set("DisplayAlerts", value);
 #else
         app.DisplayAlerts = value;
 #endif
         }
 
-        // Gestione Visibility della Application
         internal static void SetVisible(this ExcelAppTarget app, bool value)
         {
-#if RELEASEAOT
+#if AOT
             app.Set("Visible", value);
 #else
         app.Visible = value;
 #endif
         }
 
-        // Aggiunge un nuovo Workbook e lo restituisce
         internal static ExcelWorkbookTarget AddWorkbook(this ExcelAppTarget app)
         {
-#if RELEASEAOT
+#if AOT
             var workbooks = (IDynamic)app.Get("Workbooks");
             return (ExcelWorkbookTarget)workbooks.Invoke("Add", Array.Empty<object>());
 #else
@@ -512,20 +484,18 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Recupera l'ActiveSheet corrente
         internal static ExcelWorksheetTarget GetActiveSheet(this ExcelAppTarget app)
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelWorksheetTarget)app.Get("ActiveSheet");
 #else
             return (ExcelWorksheetTarget)app.ActiveSheet;
 #endif
         }
 
-        // Recupera l'ActiveSheet corrente
         internal static ExcelRangeTarget GetActiveCell(this ExcelAppTarget app)
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelRangeTarget)app.Get("ActiveCell");
 #else
             return (ExcelRangeTarget)app.ActiveCell;
@@ -533,10 +503,9 @@ namespace ExcelDNAtest
         }
 
 
-        // Apre un Workbook gestendo i parametri posizionali in AOT
         internal static ExcelWorkbookTarget OpenWorkbook(this ExcelAppTarget app, string file, bool readOnly, bool ignoreReadOnlyRecommended)
         {
-#if RELEASEAOT
+#if AOT
             var workbooks = (IDynamic)app.Get("Workbooks");
             // Firma posizionale di Workbooks.Open: 1.Filename, 2.UpdateLinks, 3.ReadOnly, 4.Format, 5.Password, 6.WriteResPassword, 7.IgnoreReadOnlyRecommended
             return (ExcelWorkbookTarget)workbooks.Invoke("Open", new object[]
@@ -554,10 +523,9 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Recupera un foglio tramite Indice (int) o Nome (string)
         internal static ExcelWorksheetTarget GetSheet(this ExcelWorkbookTarget wb, object indexOrName)
         {
-#if RELEASEAOT
+#if AOT
             var sheets = (IDynamic)wb.Get("Sheets");
             return (ExcelWorksheetTarget)sheets.Get("Item", new object[] { indexOrName });
 #else
@@ -565,50 +533,45 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Recupera la proprietà FullName del Workbook
         internal static string GetFullName(this ExcelWorkbookTarget wb)
         {
-#if RELEASEAOT
+#if AOT
             return (string)wb.Get("FullName");
 #else
         return wb.FullName;
 #endif
         }
 
-        // Recupera una cella specifica per riga e colonna da un foglio
         internal static ExcelRangeTarget GetCell(this ExcelWorksheetTarget sheet, int row, int column)
         {
-#if RELEASEAOT
+#if AOT
             return (ExcelRangeTarget)sheet.Get("Cells", new object[] { row, column });
 #else
         return (ExcelRangeTarget)sheet.Cells[row, column];
 #endif
         }
 
-        // Chiude il Workbook
         internal static void Close(this ExcelWorkbookTarget wb, bool saveChanges)
         {
-#if RELEASEAOT
+#if AOT
             wb.Invoke("Close", new object[] { saveChanges });
 #else
         wb.Close(saveChanges);
 #endif
         }
 
-        // Imposta la visibilità del foglio di lavoro
         internal static void SetVisibility(this ExcelWorksheetTarget sheet, XlSheetVisibility visibility)
         {
-#if RELEASEAOT
+#if AOT
             sheet.Set("Visible", (int)visibility);
 #else
         sheet.Visible = (Microsoft.Office.Interop.Excel.XlSheetVisibility)visibility;
 #endif
         }
 
-        // Recupera il ColorIndex del Font come stringa safely
         internal static string GetFontColorIndex(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             var font = (IDynamic)range.Get("Font");
             return font.Get("ColorIndex")?.ToString() ?? "";
 #else
@@ -616,20 +579,18 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Recupera il ColorIndex dell'Interior (riempimento) come stringa safely
         internal static string GetInteriorColorIndex(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             var interior = (IDynamic)range.Get("Interior");
             return interior.Get("ColorIndex")?.ToString() ?? "";
 #else
         return range.Interior.ColorIndex?.ToString() ?? "";
 #endif
         }
-        // Aggiunge un collegamento ipertestuale al Range
         internal static void AddHyperlink(this ExcelRangeTarget range, string fileAddress, string screenTip, string textToDisplay)
         {
-#if RELEASEAOT
+#if AOT
             var hyperlinks = (IDynamic)range.Get("Hyperlinks");
             // I parametri posizionali di Excel per Hyperlinks.Add sono:
             // 1. Anchor (range)
@@ -651,7 +612,7 @@ namespace ExcelDNAtest
         }
         internal static ExcelRangeTarget? GetSelection(this ExcelAppTarget app)
         {
-#if RELEASEAOT
+#if AOT
             object selection = app.Get("Selection");
             return selection as ExcelRangeTarget;
 #else
@@ -662,7 +623,7 @@ namespace ExcelDNAtest
         // Esegue un'azione su ogni singola cella del range evitando i problemi di enumerazione COM in AOT
         internal static void ForEachCell(this ExcelRangeTarget range, Action<ExcelRangeTarget> action)
         {
-#if RELEASEAOT
+#if AOT
             // Otteniamo il conteggio di righe e colonne per fare un ciclo for numerico pulito
             var rowsObj = (IDynamic)range.Get("Rows");
             int rows = (int)rowsObj.Get("Count");
@@ -690,17 +651,16 @@ namespace ExcelDNAtest
 
         internal static bool GetHasFormula(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             return (bool)(range.Get("HasFormula") ?? false);
 #else
         return (bool)range.HasFormula;
 #endif
         }
 
-        // Recupera l'ActiveWorkbook corrente dell'applicazione
         internal static ExcelWorkbookTarget? GetActiveWorkbook(this ExcelAppTarget app)
         {
-#if RELEASEAOT
+#if AOT
             object wb = app.Get("ActiveWorkbook");
             return wb as ExcelWorkbookTarget;
 #else
@@ -708,10 +668,9 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Esporta il Workbook mappando i parametri posizionali esatti di Excel
         internal static void ExportAsFixedFormat(this ExcelWorkbookTarget wb, XlFixedFormatType type, string filename, bool includeDocProperties, bool ignorePrintAreas, bool openAfterPublish)
         {
-#if RELEASEAOT
+#if AOT
             // Firma COM posizionale di ExportAsFixedFormat:
             // 1.Type, 2.Filename, 3.Quality, 4.IncludeDocProperties, 5.IgnorePrintAreas, 6.From, 7.To, 8.OpenAfterPublish
             wb.Invoke("ExportAsFixedFormat", new object[]
@@ -730,10 +689,9 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Invia in stampa il Workbook rispettando la posizione dei parametri COM
         internal static void PrintOut(this ExcelWorkbookTarget wb, int copies, bool collate)
         {
-#if RELEASEAOT
+#if AOT
             // Firma COM posizionale di PrintOut:
             // 1.From, 2.To, 3.Copies, 4.Preview, 5.ActivePrinter, 6.PrintToFile, 7.Collate
             wb.Invoke("PrintOut", new object[]
@@ -751,20 +709,18 @@ namespace ExcelDNAtest
 #endif
         }
 
-        // Forzza lo stato della cella/range come "da ricalcolare" (Dirty)
         internal static void Dirty(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             range.Invoke("Dirty", Array.Empty<object>());
 #else
         range.Dirty();
 #endif
         }
 
-        // Esegue il ricalcolo immediato della cella/range
         internal static void Calculate(this ExcelRangeTarget range)
         {
-#if RELEASEAOT
+#if AOT
             range.Invoke("Calculate", Array.Empty<object>());
 #else
         range.Calculate();
@@ -775,7 +731,7 @@ namespace ExcelDNAtest
         {
             if (ribbon == null) return;
 
-#if RELEASEAOT
+#if AOT
             if (ribbon is ExcelDna.Integration.IDynamic dynamicRibbon)
             {
                 dynamicRibbon.Invoke("Invalidate", Array.Empty<object>());
@@ -793,7 +749,7 @@ namespace ExcelDNAtest
         {
             if (ribbon == null) return;
 
-#if RELEASEAOT
+#if AOT
             if (ribbon is ExcelDna.Integration.IDynamic dynamicRibbon)
             {
                 dynamicRibbon.Invoke("InvalidateControl", new object[] { controlId });

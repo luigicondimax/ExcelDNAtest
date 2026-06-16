@@ -1,17 +1,14 @@
-﻿using System.Globalization;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.IO;
-using System;
 
 namespace ExcelDNAtest.Classi
 {
     // Cambia la classe in public. Essendo dentro un XLL non cambia nulla all'esterno, 
     // ma il Source Generator ora può "leggerla" senza restrizioni di sicurezza.
-    public class ImpostazioniApplicazione
+    public class ApplicationSettings
     {
         // Anche le proprietà devono essere public per essere serializzate correttamente in AOT
-        public CultureInfo? Lingua { get; set; }
+        public string? Language { get; set; }
     }
 
     // Assicurati che anche tutte le sottoclassi siano public!
@@ -19,7 +16,7 @@ namespace ExcelDNAtest.Classi
     // public class ImpostazioniSistemaLicenza { ... }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
-    [JsonSerializable(typeof(ImpostazioniApplicazione))]
+    [JsonSerializable(typeof(ApplicationSettings))]
     internal partial class AppSettingsJsonContext : JsonSerializerContext
     {
     }
@@ -30,7 +27,7 @@ namespace ExcelDNAtest.Classi
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "ExcelToolset", "settings.json");
 
-        private static ImpostazioniApplicazione? _current;
+        private static ApplicationSettings? _current;
         // Oggetto di blocco per evitare problemi se due thread salvano contemporaneamente
         private static readonly object LockObject = new object();
 
@@ -38,7 +35,7 @@ namespace ExcelDNAtest.Classi
         /// <summary>
         /// Punto di accesso globale alle impostazioni correnti.
         /// </summary>
-        internal static ImpostazioniApplicazione Current
+        internal static ApplicationSettings Current
         {
             get
             {
@@ -52,17 +49,17 @@ namespace ExcelDNAtest.Classi
         }
 
         // Teniamo il metodo Load privato, non serve che gli altri lo chiamino direttamente
-        private static ImpostazioniApplicazione Load()
+        private static ApplicationSettings Load()
         {
             try
             {
-                if (!File.Exists(FilePath)) return new ImpostazioniApplicazione();
+                if (!File.Exists(FilePath)) return new ApplicationSettings();
                 string json = File.ReadAllText(FilePath);
-                return JsonSerializer.Deserialize(json, AppSettingsJsonContext.Default.ImpostazioniApplicazione) ?? new ImpostazioniApplicazione();
+                return JsonSerializer.Deserialize(json, AppSettingsJsonContext.Default.ApplicationSettings) ?? new ApplicationSettings();
             }
             catch
             {
-                return new ImpostazioniApplicazione();
+                return new ApplicationSettings();
             }
         }
 
@@ -80,7 +77,7 @@ namespace ExcelDNAtest.Classi
                     string? dir = Path.GetDirectoryName(FilePath);
                     if (dir != null && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
-                    string json = JsonSerializer.Serialize(_current, AppSettingsJsonContext.Default.ImpostazioniApplicazione);
+                    string json = JsonSerializer.Serialize(_current, AppSettingsJsonContext.Default.ApplicationSettings);
                     File.WriteAllText(FilePath, json);
                 }
                 catch (Exception ex)

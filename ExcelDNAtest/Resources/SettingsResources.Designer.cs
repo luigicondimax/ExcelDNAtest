@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExcelDNAtest.Risorse {
+namespace ExcelDNAtest.Resources {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace ExcelDNAtest.Risorse {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ImpostazioniRisorse {
+    internal class SettingsResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ImpostazioniRisorse() {
+        internal SettingsResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ExcelDNAtest.Risorse {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExcelDNAtest.Risorse.ImpostazioniRisorse", typeof(ImpostazioniRisorse).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExcelDNAtest.Resources.SettingsResources", typeof(SettingsResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,6 +61,15 @@ namespace ExcelDNAtest.Risorse {
         }
         
         /// <summary>
+        ///   Cerca una stringa localizzata simile a Annulla.
+        /// </summary>
+        internal static string Annulla {
+            get {
+                return ResourceManager.GetString("Annulla", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una stringa localizzata simile a Lingua aggiornata.
         /// </summary>
         internal static string Lingua_aggiornata {
@@ -70,11 +79,38 @@ namespace ExcelDNAtest.Risorse {
         }
         
         /// <summary>
+        ///   Cerca una stringa localizzata simile a Localizzazione.
+        /// </summary>
+        internal static string Localizzazione {
+            get {
+                return ResourceManager.GetString("Localizzazione", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una stringa localizzata simile a Riavviare Excel per aggiornare la lingua.
         /// </summary>
         internal static string Riavviare_Excel_per_aggiornare_la_lingua_delle_funzioni {
             get {
                 return ResourceManager.GetString("Riavviare Excel per aggiornare la lingua delle funzioni", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Salva.
+        /// </summary>
+        internal static string Salva {
+            get {
+                return ResourceManager.GetString("Salva", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Seleziona la lingua dell&apos;interfaccia:.
+        /// </summary>
+        internal static string Seleziona_la_lingua_dell_interfaccia_ {
+            get {
+                return ResourceManager.GetString("Seleziona la lingua dell\'interfaccia:", resourceCulture);
             }
         }
     }

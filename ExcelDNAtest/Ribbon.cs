@@ -1,9 +1,11 @@
-﻿using ExcelDna.Integration.CustomUI;
+﻿using Avalonia.Threading;
+using ExcelDna.Integration.CustomUI;
+using ExcelDNAtest.Resources;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using Avalonia.Threading;
+using System.Resources;
+using System.Runtime.InteropServices;
 
 
 namespace ExcelDNAtest
@@ -12,7 +14,7 @@ namespace ExcelDNAtest
 
     [ComVisible(true)]
     public class RibbonController :
-#if RELEASEAOT
+#if AOT
     IExcelRibbon
 #else
     ExcelRibbon
@@ -20,19 +22,19 @@ namespace ExcelDNAtest
     {
         internal static RibbonUITarget? myRibbon;
 
-#if !RELEASEAOT
+#if !AOT
         public override string GetCustomUI(string RibbonID)
 #else
         public string GetCustomUI(string RibbonID)
 #endif
         {
 
-            // Inserito all'interno di un blocco try-catch preventivo per i requisiti Excel-DNA https://groups.google.com/g/exceldna/c/niFYofn2NYE
+            // https://groups.google.com/g/exceldna/c/niFYofn2NYE
             try
             {
 
                 return $"""
-            <customUI xmlns='http://schemas.microsoft.com/office/2006/01/customui' onLoad='ribbonLoaded' loadImage='CaricaImmaginiPersonalizzate' >
+            <customUI xmlns='http://schemas.microsoft.com/office/2006/01/customui' onLoad='ribbonLoaded' loadImage='LoadImage'>
                 <ribbon>
                     <tabs>
                         <tab id='tab2' label='Exceldna'>
@@ -41,12 +43,15 @@ namespace ExcelDNAtest
                                 <button id='MostraImpostazioniExcelToolset' size='large' label='MessageBox' onAction='CreateMessageBox' imageMso='CurrentViewSettings'/>
                             </group>
                             <group id='Form' label='Form'>
-                                <button id='OpenForm' size='large' label='OpenForm' onAction='OpenForm' imageMso='CurrentViewSettings'/>
+                                <button id='OpenForm' size='large' label='{RibbonResources.Apri_la_form}' onAction='OpenForm' image="ExcelDNAtest.Image.Icon.ico" />
                             </group>
                             <group id='InvForm' label='InvalidateForm'>
-                                <button id='InvalidateForm' label='InvalidateForm' onAction='InvalidateForm'/>
+                                <button id='InvalidateForm' label='InvalidateForm' onAction='InvalidateForm' image="ExcelDNAtest.Image.Package.ico"/>
                             </group>
-                     
+                            <group id='Form4' label='Label'>
+                                <button id='GetLabelId' size='large' getLabel='GetLabel' onAction='OpenForm' image="ExcelDNAtest.Image.Icon.ico" />
+                            </group>
+                                
                         </tab>
                     </tabs>
                 </ribbon>
@@ -59,15 +64,19 @@ namespace ExcelDNAtest
                 return "";
             }
         }
+        public string GetLabel(RibbonControlTarget control)
+        {
+            return RibbonResources.Apri_la_form;
+        }
 
         public void ribbonLoaded(RibbonUITarget ribbon)
         {
             // the only cast possible but is empty
-            if (ribbon is ExcelDna.Integration.CustomUI.RibbonControl rc)
-            {
+            //if (ribbon is ExcelDna.Integration.CustomUI.RibbonControl rc)
+            //{
 
-            }
-                myRibbon =ribbon;
+            //}
+             myRibbon =ribbon;
         }
 
         public async void CreateMessageBox(RibbonControlTarget control)
@@ -83,7 +92,7 @@ namespace ExcelDNAtest
                 catch (Exception e)
                 {
 
-                    Trace.TraceError($"Errore in CreateMessageBox: {e.Message}");
+                    Trace.TraceError($"Error in CreateMessageBox: {e.Message}");
                     throw;
                 }
             });
@@ -95,13 +104,13 @@ namespace ExcelDNAtest
             {
                 try
                 {
-                    var form = new FormImpostazioniExcelToolset();
+                    var form = new FormSettings();
                     form.Show();
                 }
                 catch (Exception e)
                 {
 
-                    Trace.TraceError($"Errore in apertura FormImpostazioniExcelToolset: {e.Message}");
+                    Trace.TraceError($"Error opening FormImpostazioniExcelToolset: {e.Message}");
                     throw;
                 }
             });

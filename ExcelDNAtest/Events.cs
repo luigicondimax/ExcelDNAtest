@@ -4,23 +4,26 @@ using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using ExcelDna.Integration;
 using ExcelDna.Integration.CustomUI;
-#if !RELEASEAOT
+#if !AOT
 using ExcelDna.IntelliSense;
 #endif
 using ExcelDna.Logging;
 using ExcelDna.Registration;
+using ExcelDNAtest.Classi;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace ExcelDNAtest
 {
-    public partial class Eventi : IExcelAddIn
+    public partial class Events : IExcelAddIn
     {
 
         internal static bool MostraRibbon = false;
         private static AppBuilder? _appBuilder;
+        private static ApplicationSettings imp => SettingsManager.Current;
 
         public void AddIn()
         {
@@ -33,9 +36,18 @@ namespace ExcelDNAtest
 
             ParameterConversionConfiguration conversionConfig;
             conversionConfig = new ParameterConversionConfiguration().AddParameterConversion(ParameterConversions.GetOptionalConversion(treatEmptyAsMissing: true));
-            
+
+            if (imp.Language is not null)
+            {
+                var culture = CultureInfo.GetCultureInfoByIetfLanguageTag(imp.Language);
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+            }
+            Trace.TraceInformation($"CurrentUICulture: {CultureInfo.CurrentUICulture}");
+
             try
             {
+#if AOT
                 string xllDirectory = Path.GetDirectoryName(ExcelDnaUtil.XllPath);
                 string skiaDllPath = Path.Combine(xllDirectory, "libSkiaSharp.dll");
                 string avDllPath = Path.Combine(xllDirectory, "av_libglesv2.dll");
@@ -69,7 +81,9 @@ namespace ExcelDNAtest
                 else
                 {
                     Trace.TraceError($"Attenzione: libHarfBuzzSharp.dll non trovata in {harfBuzzDllPath}");
-                }
+                } 
+#endif
+
                 _appBuilder = AppBuilder.Configure<App>()
                     .UsePlatformDetect()
                     //.UseHarfBuzz()
@@ -84,7 +98,7 @@ namespace ExcelDNAtest
             }
 
 
-#if !RELEASEAOT
+#if !AOT
             IntelliSenseServer.Install();
 #endif
 
@@ -107,7 +121,7 @@ namespace ExcelDNAtest
         public void AutoClose()
         {
 
-#if !RELEASEAOT
+#if !AOT
             IntelliSenseServer.Uninstall();
 #endif
         }

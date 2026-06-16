@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExcelDNAtest.Classi
+﻿namespace ExcelDNAtest.Classi
 {
     internal class Enum_Dict
     {
