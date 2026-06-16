@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Configurations>Debug;Release;ReleaseAOT</Configurations>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
+		<UseWindowsForms>false</UseWindowsForms>
+		<ExcelDnaPackNativeLibraryDependencies>true</ExcelDnaPackNativeLibraryDependencies>
+		<ExcelDnaPackManagedDependencies>true</ExcelDnaPackManagedDependencies>
+
+		<!--
+		<WarningsAsErrors>IL2026;IL3050</WarningsAsErrors>
+		-->
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'ReleaseAOT'">
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<PublishAOT>true</PublishAOT>
+		<SelfContained>true</SelfContained>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<CustomResourceTypesSupport>true</CustomResourceTypesSupport>
+		<IsAotCompatible>true</IsAotCompatible>
+
+		<SetNativeSymbols>true</SetNativeSymbols>
+		<PublishSymbols>true</PublishSymbols>
+		<StripSymbols>false</StripSymbols>
+		<DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+
+		<IlcOptimizationPreference>Debug</IlcOptimizationPreference>
+		<InvariantGlobalization>false</InvariantGlobalization>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="'$(Configuration)' == 'ReleaseAOT'">
+		<PackageReference Include="ExcelDna.AddIn.NativeAOT" Version="1.10.0-preview4" />
+
+		<TrimmerRootDescriptor Include="TrimmerRoots.xml" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' != 'ReleaseAOT'">
+		<PackageReference Include="ExcelDna.AddIn" Version="1.10.0-preview4" />
+		<PackageReference Include="ExcelDna.IntelliSense" Version="1.10.0-preview4" />
+	</ItemGroup>
+
+	<Target Name="AutoPublishAot" AfterTargets="Build" Condition="'$(Configuration)' == 'ReleaseAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
+		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso (fase completa)..." />
+		<Exec Command="dotnet publish -c releaseAOT /p:IsPublishing=true" />
+	</Target>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="12.0.4" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="11.3.17" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+		<PackageReference Include="ExcelDna.Interop" Version="15.0.1" />
+		<PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Form\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Risorse\ImpostazioniRisorse.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ImpostazioniRisorse.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Risorse\ImpostazioniRisorse.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ImpostazioniRisorse.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+</Project>
