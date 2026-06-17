@@ -7,12 +7,12 @@
 		<Configurations>Debug;Release;DebugAOT;ReleaseAOT</Configurations>
 		<EnableAotAnalyzer>true</EnableAotAnalyzer>
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-		
+
 		<!--
 		<VerifyReferenceAotCompatibility>true</VerifyReferenceAotCompatibility>
 		-->
 		<UseWindowsForms>false</UseWindowsForms>
-		
+
 		<ExcelDnaPackNativeLibraryDependencies>true</ExcelDnaPackNativeLibraryDependencies>
 		<ExcelDnaPackManagedDependencies>true</ExcelDnaPackManagedDependencies>
 
@@ -35,7 +35,7 @@
 		<IsAotCompatible>true</IsAotCompatible>
 		<InvariantGlobalization>false</InvariantGlobalization>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT'">
 		<SetNativeSymbols>true</SetNativeSymbols>
 		<PublishSymbols>true</PublishSymbols>
@@ -50,7 +50,7 @@
 		<TrimmerRootDescriptor Include="TrimmerRoots.xml" />
 	</ItemGroup>
 
-	
+
 	<ItemGroup Condition="'$(Configuration)' != 'ReleaseAOT' And '$(Configuration)' != 'DebugAOT'">
 		<PackageReference Include="ExcelDna.AddIn" Version="1.10.0-preview4" />
 		<PackageReference Include="ExcelDna.IntelliSense" Version="1.10.0-preview4" />
@@ -59,41 +59,22 @@
 	<Target Name="AutoPublishAotRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'ReleaseAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
 		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso ..." />
 		<Exec Command="dotnet publish -c ReleaseAOT /p:IsPublishing=true" />
-	</Target>	
+	</Target>
 	<Target Name="AutoPublishAotDebug" AfterTargets="Build" Condition="'$(Configuration)' == 'DebugAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
 		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso ..." />
 		<Exec Command="dotnet publish -c DebugAOT /p:IsPublishing=true" />
 	</Target>
-	
-	<PropertyGroup>
-		<StartAction>Program</StartAction>
-		<StartProgram>C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE</StartProgram>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)' != 'ReleaseAOT' And '$(Configuration)' != 'DebugAOT'">
-		<StartArguments>/x "ExcelDNAtest-AddIn64.xll"</StartArguments>
-	</PropertyGroup>
 
 	<PropertyGroup>
-		<StartAction>Program</StartAction>
-		<StartProgram>C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE</StartProgram>
+		<ExcelDnaFileName>$(MSBuildProjectName)-AddIn64.xll</ExcelDnaFileName>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' != 'ReleaseAOT' And '$(Configuration)' != 'DebugAOT'">
-		<StartWorkingDirectory>$(MSBuildProjectDirectory)\bin\$(Configuration)\net10.0-windows\</StartWorkingDirectory>
-		<StartArguments>/x "ExcelDNAtest-AddIn64.xll"</StartArguments>
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(ExcelDnaFileName)</RunExcelDnaXll>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT'">
-		<StartWorkingDirectory>$(MSBuildProjectDirectory)\bin\DebugAOT\net10.0-windows\win-x64\publish\</StartWorkingDirectory>
-		<StartArguments>/x "ExcelDNAtest-AddIn64.xll"</StartArguments>
-		<LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)' == 'ReleaseAOT'">
-		<StartWorkingDirectory>$(MSBuildProjectDirectory)\bin\ReleaseAOT\net10.0-windows\win-x64\publish\</StartWorkingDirectory>
-		<StartArguments>/x "ExcelDNAtest-AddIn64.xll"</StartArguments>
-		<LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
+	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT' Or '$(Configuration)' == 'ReleaseAOT'">
+		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\$(ExcelDnaFileName)</RunExcelDnaXll>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -106,30 +87,30 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Form\FormSettings.axaml.cs">
-	    <DependentUpon>FormSettings.axaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\SettingsResources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>SettingsResources.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\RibbonResources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>RibbonResources.resx</DependentUpon>
-	  </Compile>
+		<Compile Update="Form\FormSettings.axaml.cs">
+			<DependentUpon>FormSettings.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\SettingsResources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>SettingsResources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\RibbonResources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>RibbonResources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Resources\SettingsResources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>SettingsResources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\RibbonResources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>RibbonResources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Resources\SettingsResources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>SettingsResources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\RibbonResources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>RibbonResources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -138,7 +119,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Properties\" />
+		<Folder Include="Properties\" />
 	</ItemGroup>
 
 
