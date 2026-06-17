@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Annulla" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annulla</value>
   </data>
   <data name="Lingua aggiornata" xml:space="preserve">
-    <value>Updated language</value>
+    <value>Lingua aggiornata</value>
   </data>
   <data name="Localizzazione" xml:space="preserve">
-    <value>Localization</value>
+    <value>Localizzazione</value>
   </data>
   <data name="Riavviare Excel per aggiornare la lingua delle funzioni" xml:space="preserve">
-    <value>Restart Excel to update the language</value>
+    <value>Riavviare Excel per aggiornare la lingua</value>
   </data>
   <data name="Salva" xml:space="preserve">
-    <value>Save</value>
+    <value>Salva</value>
   </data>
   <data name="Seleziona la lingua dell'interfaccia:" xml:space="preserve">
-    <value>Select the interface language:</value>
+    <value>Seleziona la lingua dell'interfaccia:</value>
   </data>
 </root>

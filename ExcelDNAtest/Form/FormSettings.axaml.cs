@@ -88,6 +88,8 @@ namespace ExcelDNAtest
                 var culture = CultureInfo.GetCultureInfoByIetfLanguageTag(voceSelezionata.Codice);
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
             }
             else
             {
@@ -96,15 +98,14 @@ namespace ExcelDNAtest
 
             RibbonController.myRibbon.InvalidateRibbon();
 
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                var titolo = SettingsResources.Lingua_aggiornata;
-                var testo = SettingsResources.Riavviare_Excel_per_aggiornare_la_lingua_delle_funzioni;
-                var box = MessageBoxManager.GetMessageBoxStandard(titolo, testo, ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Info);
-                await box.ShowWindowAsync();
-            });
 
-            this.Close();
+            var titolo = SettingsResources.Lingua_aggiornata;
+            var testo = SettingsResources.Riavviare_Excel_per_aggiornare_la_lingua_delle_funzioni;
+            var box = MessageBoxManager.GetMessageBoxStandard(titolo, testo, ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Info);
+            await box.ShowWindowDialogAsync(this);
+
+            // or close before showing the message box.
+            Dispatcher.UIThread.Post(() => this.Close());
         }
 
         private void ButtonAnnulla_Click(object? sender, RoutedEventArgs e)

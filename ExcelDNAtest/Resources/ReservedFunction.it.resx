@@ -117,7 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Apri la form" xml:space="preserve">
-    <value>Open form</value>
+  <data name="DynamicRegistrationTest_Desc" xml:space="preserve">
+    <value>test della registrazione dinamica</value>
+  </data>
+  <data name="DynamicRegistrationTest_Name" xml:space="preserve">
+    <value>RegistrazioneDinamicaTest</value>
   </data>
 </root>

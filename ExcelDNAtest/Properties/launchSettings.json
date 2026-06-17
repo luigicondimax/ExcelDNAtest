@@ -3,7 +3,8 @@
     "Excel": {
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
-      "commandLineArgs": "/x \"$(RunExcelDnaXll)\""
+      "commandLineArgs": "/x \"$(RunExcelDnaXll)\"",
+      "debugEngines": "$(ExcelDnaDebugger)"
     }
   }
 }

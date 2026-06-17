@@ -32,26 +32,28 @@ namespace ExcelDNAtest
             // https://groups.google.com/g/exceldna/c/niFYofn2NYE
             try
             {
-
+                // icon must be created from BMP and not from PNG. PNG --> BMP --> ICO
                 return $"""
             <customUI xmlns='http://schemas.microsoft.com/office/2006/01/customui' onLoad='ribbonLoaded' loadImage='LoadImage'>
                 <ribbon>
                     <tabs>
                         <tab id='tab2' label='Exceldna'>
                 
-                            <group id='Impostazioni' label='TEST'>
+                            <group id='Msg' label='Msg'>
                                 <button id='MostraImpostazioniExcelToolset' size='large' label='MessageBox' onAction='CreateMessageBox' imageMso='CurrentViewSettings'/>
                             </group>
-                            <group id='Form' label='Form'>
-                                <button id='OpenForm' size='large' label='{RibbonResources.Apri_la_form}' onAction='OpenForm' image="ExcelDNAtest.Image.Icon.ico" />
+                            <group id='Setting' label='Setting'>
+                                <button id='OpenSettingForm' size='large' label='{RibbonResources.Apri_la_form}' onAction='OpenSettingForm' image="ExcelDNAtest.Image.Icon.ico" />
                             </group>
                             <group id='InvForm' label='InvalidateForm'>
                                 <button id='InvalidateForm' label='InvalidateForm' onAction='InvalidateForm' image="ExcelDNAtest.Image.Package.ico"/>
                             </group>
-                            <group id='Form4' label='Label'>
-                                <button id='GetLabelId' size='large' getLabel='GetLabel' onAction='OpenForm' image="ExcelDNAtest.Image.Icon.ico" />
+                            <group id='Form4' label=' Dynamic label'>
+                                <labelControl id='GetLabelId' getLabel='GetLabel'/>
                             </group>
-                                
+                            <group id='group1' getVisible='isFunzioniVisible' label='Test visibility'>
+                                <labelControl id='dasd' label='Text hidden'/>
+                            </group>
                         </tab>
                     </tabs>
                 </ribbon>
@@ -68,6 +70,10 @@ namespace ExcelDNAtest
         {
             return RibbonResources.Apri_la_form;
         }
+        public bool isFunzioniVisible(RibbonControlTarget control)
+        {
+            return true;
+        }
 
         public void ribbonLoaded(RibbonUITarget ribbon)
         {
@@ -76,7 +82,7 @@ namespace ExcelDNAtest
             //{
 
             //}
-             myRibbon =ribbon;
+            myRibbon = ribbon;
         }
 
         public async void CreateMessageBox(RibbonControlTarget control)
@@ -98,19 +104,32 @@ namespace ExcelDNAtest
             });
         }
 
-        public async void OpenForm(RibbonControlTarget control)
+        private static FormSettings? _istanzaFormSettings;
+        public async void OpenSettingForm(RibbonControlTarget control)
         {
-            await Dispatcher.UIThread.InvokeAsync(async () =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 try
                 {
-                    var form = new FormSettings();
-                    form.Show();
+                    if (_istanzaFormSettings != null)
+                    {
+                        _istanzaFormSettings.Activate();
+                        return;
+                    }
+
+                    _istanzaFormSettings = new FormSettings();
+
+                    _istanzaFormSettings.Closed += (sender, e) =>
+                    {
+                        _istanzaFormSettings = null;
+                    };
+
+                    _istanzaFormSettings.Show();
                 }
                 catch (Exception e)
                 {
-
-                    Trace.TraceError($"Error opening FormImpostazioniExcelToolset: {e.Message}");
+                    Trace.TraceError($"Error opening FormSettings: {e.Message}");
+                    _istanzaFormSettings = null;
                     throw;
                 }
             });

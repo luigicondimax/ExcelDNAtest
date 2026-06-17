@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
@@ -14,6 +15,8 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 
 namespace ExcelDNAtest
@@ -30,7 +33,7 @@ namespace ExcelDNAtest
 
         }
 
-        public void AutoOpen()
+        public async void AutoOpen()
         {
             Trace.Listeners.Add(new LogDisplayTraceListener());
 
@@ -42,6 +45,8 @@ namespace ExcelDNAtest
                 var culture = CultureInfo.GetCultureInfoByIetfLanguageTag(imp.Language);
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
             }
             Trace.TraceInformation($"CurrentUICulture: {CultureInfo.CurrentUICulture}");
 
@@ -86,11 +91,8 @@ namespace ExcelDNAtest
 
                 _appBuilder = AppBuilder.Configure<App>()
                     .UsePlatformDetect()
-                    //.UseHarfBuzz()
-                    //.UseSkia()
-                    //.UseWin32()
                     .LogToTrace()
-                    .SetupWithoutStarting();    // SetupWithoutLifetime
+                    .SetupWithoutStarting();
             }
             catch (Exception e)
             {
@@ -98,11 +100,15 @@ namespace ExcelDNAtest
             }
 
 
+
+            DynamicRegistration.RegisterLocalizedFunctions();
+
 #if !AOT
             IntelliSenseServer.Install();
 #endif
 
             CreaContextMenu();
+
         }
 
         private static void CreaContextMenu()

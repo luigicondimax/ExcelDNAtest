@@ -117,22 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Annulla" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="DynamicRegistrationTest_Desc" xml:space="preserve">
+    <value>test the dynamic registration</value>
   </data>
-  <data name="Lingua aggiornata" xml:space="preserve">
-    <value>Updated language</value>
-  </data>
-  <data name="Localizzazione" xml:space="preserve">
-    <value>Localization</value>
-  </data>
-  <data name="Riavviare Excel per aggiornare la lingua delle funzioni" xml:space="preserve">
-    <value>Restart Excel to update the language</value>
-  </data>
-  <data name="Salva" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="Seleziona la lingua dell'interfaccia:" xml:space="preserve">
-    <value>Select the interface language:</value>
+  <data name="DynamicRegistrationTest_Name" xml:space="preserve">
+    <value>DynamicRegistrationTest</value>
   </data>
 </root>

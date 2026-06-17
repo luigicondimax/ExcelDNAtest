@@ -15,6 +15,8 @@
 
 		<ExcelDnaPackNativeLibraryDependencies>true</ExcelDnaPackNativeLibraryDependencies>
 		<ExcelDnaPackManagedDependencies>true</ExcelDnaPackManagedDependencies>
+		<ExcelAddInExplicitRegistration>true</ExcelAddInExplicitRegistration>
+		<RunExcelDnaSetDebuggerOptions>false</RunExcelDnaSetDebuggerOptions>
 
 		<!--
 		<WarningsAsErrors>IL2026;IL3050</WarningsAsErrors>
@@ -34,6 +36,8 @@
 		<SelfContained>true</SelfContained>
 		<IsAotCompatible>true</IsAotCompatible>
 		<InvariantGlobalization>false</InvariantGlobalization>
+		
+		<PublishTrimmed>true</PublishTrimmed>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT'">
@@ -43,9 +47,16 @@
 		<DebugType>full</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<IlcOptimizationPreference>Debug</IlcOptimizationPreference>
+		<IlcGenerateMsvcDebugInfo>true</IlcGenerateMsvcDebugInfo>
+		<OptimizationLevel>0</OptimizationLevel>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(Configuration)' == 'ReleaseAOT' OR '$(Configuration)' == 'DebugAOT'">
+	<PropertyGroup Condition="'$(Configuration)' == 'ReleaseAOT'">
+		<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+		<StripSymbols>true</StripSymbols>
+	</PropertyGroup>
+
+		<ItemGroup Condition="'$(Configuration)' == 'ReleaseAOT' OR '$(Configuration)' == 'DebugAOT'">
 		<PackageReference Include="ExcelDna.AddIn.NativeAOT" Version="1.10.0-preview4" />
 		<TrimmerRootDescriptor Include="TrimmerRoots.xml" />
 	</ItemGroup>
@@ -66,21 +77,22 @@
 	</Target>
 
 	<PropertyGroup>
-		<ExcelDnaFileName>$(MSBuildProjectName)-AddIn64.xll</ExcelDnaFileName>
+		<ExcelDnaFileName>$(MSBuildProjectName)64.xll</ExcelDnaFileName>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(ExcelDnaFileName)</RunExcelDnaXll>
+		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)64.xll</RunExcelDnaXll>
+		<ExcelDnaDebugger>managed</ExcelDnaDebugger>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT' Or '$(Configuration)' == 'ReleaseAOT'">
-		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\$(ExcelDnaFileName)</RunExcelDnaXll>
+		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\$(MSBuildProjectName)-AddIn64.xll</RunExcelDnaXll>
+		<ExcelDnaDebugger>native</ExcelDnaDebugger>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="12.0.4" />
 		<PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="11.3.17" />
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
 		<PackageReference Include="ExcelDna.Interop" Version="15.0.1" />
 		<PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
@@ -90,26 +102,35 @@
 		<Compile Update="Form\FormSettings.axaml.cs">
 			<DependentUpon>FormSettings.axaml</DependentUpon>
 		</Compile>
-		<Compile Update="Resources\SettingsResources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>SettingsResources.resx</DependentUpon>
+		<Compile Update="Resources\ReservedFunction.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>ReservedFunction.resx</DependentUpon>
 		</Compile>
-		<Compile Update="Resources\RibbonResources.Designer.cs">
+		<Compile Update="Resources\SettingsResources.it.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
-			<DependentUpon>RibbonResources.resx</DependentUpon>
+			<DependentUpon>SettingsResources.it.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\RibbonResources.it.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>RibbonResources.it.resx</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Update="Resources\SettingsResources.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>SettingsResources.Designer.cs</LastGenOutput>
+		<EmbeddedResource Update="Resources\ReservedFunction.resx">
+		  <Generator>ResXFileCodeGenerator</Generator>
+		  <LastGenOutput>ReservedFunction.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Resources\RibbonResources.resx">
+		<EmbeddedResource Update="Resources\SettingsResources.it.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>RibbonResources.Designer.cs</LastGenOutput>
+			<LastGenOutput>SettingsResources.it.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\RibbonResources.it.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>RibbonResources.it.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
 
