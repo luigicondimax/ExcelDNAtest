@@ -1,9 +1,9 @@
 ; ONLY FOR TEST THE SCRIPT IN INNO SETUP COMPILER
-;#define IsAOT false
+;#define IsAOT "true"
 ;#define ReleasePath "C:\Users\luigi\source\repos\ExcelDNAtest\ExcelDNAtest\bin\ReleaseAOT\net10.0-windows"
 ;#define ReleasePath "C:\Users\luigi\source\repos\ExcelDNAtest\ExcelDNAtest\bin\Release\net10.0-windows"
 ;#define XllName "ExcelDNAtest"
-#define ResourcePath "C:\Users\luigi\source\repos\ExcelDNAtest\ExcelDNAtest\Inno Setup\Resources\"
+;#define ResourcePath "C:\Users\luigi\source\repos\ExcelDNAtest\ExcelDNAtest\Inno Setup\Resources"
 ;#define AppName "ExcelDNAtest"
 ; END TEST 
 
@@ -65,10 +65,10 @@ PrivilegesRequiredOverridesAllowed=dialog
 CloseApplications=yes
 
 ; Icona e Grafica
-SetupIconFile={#ResourcePath}company.ico
-UninstallDisplayIcon={#ResourcePath}company.ico
-LicenseFile={#ResourcePath}product_License.rtf
-;WizardSmallImageFile={#ResourcePath}company2.ico
+SetupIconFile={#ResourcePath}\company.ico
+UninstallDisplayIcon={#ResourcePath}\company.ico
+LicenseFile={#ResourcePath}\product_License.rtf
+;WizardSmallImageFile={#ResourcePath}\company2.ico
 
 ; Output
 OutputDir={#OutputPath}

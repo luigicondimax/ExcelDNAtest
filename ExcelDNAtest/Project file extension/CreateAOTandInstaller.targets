@@ -21,11 +21,12 @@
 			<InnoCompiler>"C:\Program Files (x86)\Inno Setup 6\ISCC.exe"</InnoCompiler>
 			<InnoScriptPath>$(MSBuildProjectDirectory)\Inno Setup\Installer.iss</InnoScriptPath>
 			<ReleasePath>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)</ReleasePath>
+			<ResourcePath>$(MSBuildProjectDirectory)\Inno Setup\Resources</ResourcePath>
 			<XllName>$(MSBuildProjectName)</XllName>
 			<IsAotBuild Condition="'$(IsAotBuild)' == ''">false</IsAotBuild>
 		</PropertyGroup>
 		<Message Importance="High" Text="[InnoSetup] Generazione Installer Unico (Configurazione: $(Configuration) | IsAOT: $(IsAotBuild))..." />
-		<Exec Command="$(InnoCompiler) /DIsAOT=$(IsAotBuild) /DReleasePath=&quot;$(ReleasePath)&quot; /DXllName=&quot;$(XllName)&quot; /DAppName=&quot;$(MSBuildProjectName)&quot; &quot;$(InnoScriptPath)&quot;" />
+		<Exec Command="$(InnoCompiler) /DIsAOT=$(IsAotBuild) /DReleasePath=&quot;$(ReleasePath)&quot; /DResourcePath=&quot;$(ResourcePath)&quot; /DXllName=&quot;$(XllName)&quot; /DAppName=&quot;$(MSBuildProjectName)&quot; &quot;$(InnoScriptPath)&quot;" />
 	</Target>
 	
 	<!-- Call create installer for JIT -->
