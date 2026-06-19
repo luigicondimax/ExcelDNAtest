@@ -25,7 +25,7 @@ namespace ExcelDNAtest
 {
     internal static class ExcelUtil
     {
-        internal static ExcelReference Caller()
+        internal static ExcelReference? Caller()
         {
             return XlCall.Excel(XlCall.xlfCaller) as ExcelReference;
         }
@@ -38,21 +38,26 @@ namespace ExcelDNAtest
             return index >= 0 ? fullPath[(index + 1)..] : fullPath;
         }
 
-        internal static ExcelRangeTarget ToRange(ExcelReference reference)
+        internal static ExcelRangeTarget? ToRange(ExcelReference reference)
         {
             if (reference == null) return null!;
 
             ExcelAppTarget xlApp = ActiveApplication();
+            if (xlApp == null) return null;
             string sheetName = GetSheetName(reference);
 
 #if AOT
-            var sheets = (IDynamic)xlApp.Get("Sheets");
-            var ws = (IDynamic)sheets.Get("Item", [sheetName]);
+            var sheets = xlApp.Get("Sheets") as IDynamic;
+            var ws = sheets?.Get("Item", [sheetName]) as IDynamic;
 
-            var cellaInizio = (IDynamic)ws.Get("Cells", [reference.RowFirst + 1, reference.ColumnFirst + 1]);
-            var cellaFine = (IDynamic)ws.Get("Cells", [reference.RowLast + 1, reference.ColumnLast + 1]);
+            if (ws == null) return null; // Se il foglio non esiste, usciamo in sicurezza
 
-            return (ExcelRangeTarget)xlApp.Get("Range", [cellaInizio, cellaFine]);
+            var cellaInizio = ws.Get("Cells", [reference.RowFirst + 1, reference.ColumnFirst + 1]);
+            var cellaFine = ws.Get("Cells", [reference.RowLast + 1, reference.ColumnLast + 1]);
+
+            if (cellaInizio == null || cellaFine == null) return null;
+
+            return xlApp.Get("Range", [cellaInizio, cellaFine]) as ExcelRangeTarget;
 #else
             Microsoft.Office.Interop.Excel.Worksheet ws = (Microsoft.Office.Interop.Excel.Worksheet)xlApp.Sheets[sheetName];
             Microsoft.Office.Interop.Excel.Range cellaInizio = (Microsoft.Office.Interop.Excel.Range)ws.Cells[reference.RowFirst + 1, reference.ColumnFirst + 1];
@@ -73,55 +78,55 @@ namespace ExcelDNAtest
 
         }
 
-        internal static ExcelWorksheetTarget ActiveSheet()
+        internal static ExcelWorksheetTarget? ActiveSheet()
         {
 #if AOT
-            return (ExcelWorksheetTarget)ActiveApplication().Get("ActiveSheet");
+            return (ExcelWorksheetTarget?)ActiveApplication().Get("ActiveSheet");
 #else
             return ActiveApplication().ActiveSheet;
 #endif
         }
 
-        internal static ExcelWorkbookTarget ActiveWorkbook()
+        internal static ExcelWorkbookTarget? ActiveWorkbook()
         {
 #if AOT
-            return (ExcelWorkbookTarget)ActiveApplication().Get("ActiveWorkbook");
+            return (ExcelWorkbookTarget?)ActiveApplication().Get("ActiveWorkbook");
 #else
             return ActiveApplication().ActiveWorkbook;
 #endif
         }
 
-        internal static ExcelRangeTarget ActiveCell()
+        internal static ExcelRangeTarget? ActiveCell()
         {
 #if AOT
-            return (ExcelRangeTarget)ActiveApplication().Get("ActiveCell");
+            return (ExcelRangeTarget?)ActiveApplication().Get("ActiveCell");
 #else
             return ActiveApplication().ActiveCell;
 #endif
         }
 
-        internal static ExcelRangeTarget Range(string indirizzo)
+        internal static ExcelRangeTarget? Range(string indirizzo)
         {
 #if AOT
-            return (ExcelRangeTarget)ActiveApplication().Get("Range", new object[] { indirizzo });
+            return (ExcelRangeTarget?)ActiveApplication().Get("Range", [indirizzo]);
 #else
             return ActiveApplication().Range[indirizzo];
 #endif
         }
 
-        internal static ExcelChartTarget ActiveChart()
+        internal static ExcelChartTarget? ActiveChart()
         {
 #if AOT
-            return (ExcelChartTarget)ActiveApplication().Get("ActiveChart");
+            return (ExcelChartTarget?)ActiveApplication().Get("ActiveChart");
 #else
             return ActiveApplication().ActiveChart;
 #endif
         }
 
-        internal static object Evaluate(string espressione)
+        internal static object? Evaluate(string espressione)
         {
 #if AOT
-            return ActiveApplication().Invoke("Evaluate", new object[] { espressione });
+            return ActiveApplication()?.Invoke("Evaluate", [espressione]);
 #else
             return ActiveApplication().Evaluate(espressione);
 #endif
@@ -133,7 +138,7 @@ namespace ExcelDNAtest
 #if AOT
             var sel = app.Get("Selection");
 
-            if (sel != null && (string)app.Invoke("TypeName", new object[] { sel }) == "Range")
+            if (sel != null && (string?)app?.Invoke("TypeName", new object[] { sel }) == "Range")
             {
                 selection = (ExcelRangeTarget)sel;
                 return true;
@@ -172,7 +177,7 @@ namespace ExcelDNAtest
 
     internal static class ExcelExtensions
     {
-        internal static object GetValue(this ExcelRangeTarget range)
+        internal static object? GetValue(this ExcelRangeTarget range)
         {
 #if AOT
             return range.Get("Value");
@@ -190,10 +195,10 @@ namespace ExcelDNAtest
 #endif
         }
 
-        internal static string GetText(this ExcelRangeTarget range)
+        internal static string? GetText(this ExcelRangeTarget range)
         {
 #if AOT
-            return (string)range.Get("Text");
+            return (string?)range.Get("Text");
 #else
             return range.Text;
 #endif
@@ -223,7 +228,7 @@ namespace ExcelDNAtest
             range.Formula = formula;
 #endif
         }
-        internal static string GetAddress(this ExcelRangeTarget range, bool external = false)
+        internal static string? GetAddress(this ExcelRangeTarget range, bool external = false)
         {
 #if AOT
             // I parametri posizionali di Excel per Address sono:
@@ -231,19 +236,19 @@ namespace ExcelDNAtest
             // 2. ColumnAbsolute (true)
             // 3. ReferenceStyle (1 = xlA1)
             // 4. External (il nostro valore bool)
-            return (string)range.Get("Address", new object[] { true, true, 1, external });
+            return (string?)range?.Get("Address", [true, true, 1, external]);
 #else
             return range.Address[External: external];
 #endif
         }
 
-        internal static object InputBox(string prompt, string title, object? defaultValue = null,
+        internal static object? InputBox(string prompt, string title, object? defaultValue = null,
             XlInputBoxDataType type = XlInputBoxDataType.Text)
         {
             object finalDefault = defaultValue ?? Type.Missing;
 
 #if AOT
-            return ExcelUtil.ActiveApplication().Invoke("InputBox", new object[]
+            return ExcelUtil.ActiveApplication()?.Invoke("InputBox", new object[]
             {
                 prompt,
                 title,
@@ -262,7 +267,7 @@ namespace ExcelDNAtest
 
         internal static double? OttieniNumeroDaInputBox(string prompt, string title)
         {
-            object risultato = InputBox(prompt, title, type: XlInputBoxDataType.Number);
+            object risultato = InputBox(prompt, title, type: XlInputBoxDataType.Number)!;
 
             // Se l'utente preme Annulla, Excel restituisce il bool false
             if (risultato is bool b && b == false) return null;
@@ -283,16 +288,16 @@ namespace ExcelDNAtest
         /// </summary>
         internal static ExcelRangeTarget? OttieniRangeDaInputBox(string prompt, string title, string indirizzoDefault = "")
         {
-            object risultato = InputBox(prompt, title, indirizzoDefault, XlInputBoxDataType.Range);
+            object risultato = InputBox(prompt, title, indirizzoDefault, XlInputBoxDataType.Range)!;
 
             if (risultato is bool b && b == false) return null;
             return risultato as ExcelRangeTarget;
         }
 
-        internal static ExcelRangeTarget GetOffset(this ExcelRangeTarget range, int rowOffset, int columnOffset)
+        internal static ExcelRangeTarget? GetOffset(this ExcelRangeTarget range, int rowOffset, int columnOffset)
         {
 #if AOT
-            return (ExcelRangeTarget)range.Get("Offset", new object[] { rowOffset, columnOffset });
+            return (ExcelRangeTarget?)range.Get("Offset", [rowOffset, columnOffset]);
 #else
         return range.Offset[rowOffset, columnOffset];
 #endif
@@ -301,7 +306,7 @@ namespace ExcelDNAtest
         internal static object GetStyle(this ExcelRangeTarget range)
         {
 #if AOT
-            return range.Get("Style");
+            return range.Get("Style")!;
 #else
         return range.Style;
 #endif
@@ -316,28 +321,28 @@ namespace ExcelDNAtest
 #endif
         }
 
-        internal static string GetNumberFormat(this ExcelRangeTarget range)
+        internal static string? GetNumberFormat(this ExcelRangeTarget range)
         {
 #if AOT
-            return (string)range.Get("NumberFormat");
+            return (string?)range?.Get("NumberFormat");
 #else
         return range.NumberFormat?.ToString() ?? "";
 #endif
         }
 
-        internal static ExcelWorksheetTarget GetParent(this ExcelRangeTarget range)
+        internal static ExcelWorksheetTarget? GetParent(this ExcelRangeTarget range)
         {
 #if AOT
-            return (ExcelWorksheetTarget)range.Get("Parent");
+            return (ExcelWorksheetTarget?)range?.Get("Parent");
 #else
         return (ExcelWorksheetTarget)range.Parent;
 #endif
         }
 
-        internal static string GetName(this ExcelWorksheetTarget sheet)
+        internal static string? GetName(this ExcelWorksheetTarget sheet)
         {
 #if AOT
-            return (string)sheet.Get("Name");
+            return (string?)sheet?.Get("Name");
 #else
         return sheet.Name;
 #endif
@@ -346,7 +351,7 @@ namespace ExcelDNAtest
         internal static void Activate(this ExcelWorksheetTarget sheet)
         {
 #if AOT
-            sheet.Invoke("Activate", Array.Empty<object>());
+            sheet.Invoke("Activate", []);
 #else
             sheet.Activate();
 #endif
@@ -355,7 +360,7 @@ namespace ExcelDNAtest
         internal static void Select(this ExcelRangeTarget range)
         {
 #if AOT
-            range.Invoke("Select", Array.Empty<object>());
+            range.Invoke("Select", []);
 #else
         range.Select();
 #endif
@@ -364,9 +369,9 @@ namespace ExcelDNAtest
         internal static ExcelChartTarget AddChart(this ExcelWorksheetTarget sheet, XlChartType chartType)
         {
 #if AOT
-            var shapes = (IDynamic)sheet.Get("Shapes");
-            var chartShape = (IDynamic)shapes.Invoke("AddChart", new object[] { (int)chartType });
-            return (ExcelChartTarget)chartShape.Get("Chart");
+            var shapes = (IDynamic)sheet.Get("Shapes")!;
+            var chartShape = (IDynamic)shapes.Invoke("AddChart", new object[] { (int)chartType })!;
+            return (ExcelChartTarget)chartShape.Get("Chart")!;
 #else
         Microsoft.Office.Interop.Excel.Shape chartShape = sheet.Shapes.AddChart();
         Microsoft.Office.Interop.Excel.Chart chart = chartShape.Chart;
@@ -378,12 +383,12 @@ namespace ExcelDNAtest
         internal static void ClearSeries(this ExcelChartTarget chart)
         {
 #if AOT
-            var seriesCollection = (IDynamic)chart.Invoke("SeriesCollection", Array.Empty<object>());
-            int count = (int)seriesCollection.Get("Count");
+            var seriesCollection = (IDynamic)chart.Invoke("SeriesCollection", Array.Empty<object>())!;
+            int count = (int)seriesCollection.Get("Count")!;
             // Loop al contrario per evitare disallineamenti di indice durante l'eliminazione
             for (int i = count; i >= 1; i--)
             {
-                var serie = (IDynamic)seriesCollection.Invoke("Item", new object[] { i });
+                var serie = (IDynamic)seriesCollection.Invoke("Item", new object[] { i })!;
                 serie.Invoke("Delete", Array.Empty<object>());
             }
 #else
@@ -398,8 +403,8 @@ namespace ExcelDNAtest
         internal static void AddSeries(this ExcelChartTarget chart, string nameFormula, string xValuesFormula, string valuesFormula)
         {
 #if AOT
-            var seriesCollection = (IDynamic)chart.Invoke("SeriesCollection", Array.Empty<object>());
-            var nuovaSerie = (IDynamic)seriesCollection.Invoke("NewSeries", Array.Empty<object>());
+            var seriesCollection = (IDynamic)chart.Invoke("SeriesCollection", Array.Empty<object>())!;
+            var nuovaSerie = (IDynamic)seriesCollection.Invoke("NewSeries", Array.Empty<object>())!;
             nuovaSerie.Set("Name", nameFormula);
             nuovaSerie.Set("XValues", xValuesFormula);
             nuovaSerie.Set("Values", valuesFormula);
@@ -418,9 +423,9 @@ namespace ExcelDNAtest
         // =================================================================
         // In AOT, sia le Application che i Worksheet sono 'IDynamic'.
         // Definiamo un UNICO metodo di estensione per evitare l'ambiguità di firma.
-        internal static ExcelRangeTarget GetRange(this ExcelAppTarget target, string address)
+        internal static ExcelRangeTarget? GetRange(this ExcelAppTarget target, string address)
         {
-            return (ExcelRangeTarget)target.Get("Range", new object[] { address });
+            return (ExcelRangeTarget?)target?.Get("Range", new object[] { address });
         }
 #else
     // =================================================================
@@ -477,8 +482,8 @@ namespace ExcelDNAtest
         internal static ExcelWorkbookTarget AddWorkbook(this ExcelAppTarget app)
         {
 #if AOT
-            var workbooks = (IDynamic)app.Get("Workbooks");
-            return (ExcelWorkbookTarget)workbooks.Invoke("Add", Array.Empty<object>());
+            var workbooks = (IDynamic)app.Get("Workbooks")!;
+            return (ExcelWorkbookTarget)workbooks.Invoke("Add", Array.Empty<object>())!;
 #else
         return app.Workbooks.Add();
 #endif
@@ -487,16 +492,16 @@ namespace ExcelDNAtest
         internal static ExcelWorksheetTarget GetActiveSheet(this ExcelAppTarget app)
         {
 #if AOT
-            return (ExcelWorksheetTarget)app.Get("ActiveSheet");
+            return (ExcelWorksheetTarget)app.Get("ActiveSheet")!;
 #else
             return (ExcelWorksheetTarget)app.ActiveSheet;
 #endif
         }
 
-        internal static ExcelRangeTarget GetActiveCell(this ExcelAppTarget app)
+        internal static ExcelRangeTarget? GetActiveCell(this ExcelAppTarget app)
         {
 #if AOT
-            return (ExcelRangeTarget)app.Get("ActiveCell");
+            return (ExcelRangeTarget?)app?.Get("ActiveCell");
 #else
             return (ExcelRangeTarget)app.ActiveCell;
 #endif
@@ -506,7 +511,7 @@ namespace ExcelDNAtest
         internal static ExcelWorkbookTarget OpenWorkbook(this ExcelAppTarget app, string file, bool readOnly, bool ignoreReadOnlyRecommended)
         {
 #if AOT
-            var workbooks = (IDynamic)app.Get("Workbooks");
+            var workbooks = (IDynamic)app.Get("Workbooks")!;
             // Firma posizionale di Workbooks.Open: 1.Filename, 2.UpdateLinks, 3.ReadOnly, 4.Format, 5.Password, 6.WriteResPassword, 7.IgnoreReadOnlyRecommended
             return (ExcelWorkbookTarget)workbooks.Invoke("Open", new object[]
             {
@@ -517,17 +522,17 @@ namespace ExcelDNAtest
             Type.Missing,
             Type.Missing,
             ignoreReadOnlyRecommended
-            });
+            })!;
 #else
         return app.Workbooks.Open(file, ReadOnly: readOnly, IgnoreReadOnlyRecommended: ignoreReadOnlyRecommended);
 #endif
         }
 
-        internal static ExcelWorksheetTarget GetSheet(this ExcelWorkbookTarget wb, object indexOrName)
+        internal static ExcelWorksheetTarget? GetSheet(this ExcelWorkbookTarget wb, object indexOrName)
         {
 #if AOT
-            var sheets = (IDynamic)wb.Get("Sheets");
-            return (ExcelWorksheetTarget)sheets.Get("Item", new object[] { indexOrName });
+            var sheets = (IDynamic)wb.Get("Sheets")!;
+            return (ExcelWorksheetTarget?)sheets?.Get("Item", new object[] { indexOrName });
 #else
         return (ExcelWorksheetTarget)wb.Sheets[indexOrName];
 #endif
@@ -536,16 +541,16 @@ namespace ExcelDNAtest
         internal static string GetFullName(this ExcelWorkbookTarget wb)
         {
 #if AOT
-            return (string)wb.Get("FullName");
+            return (string)wb.Get("FullName")!;
 #else
         return wb.FullName;
 #endif
         }
 
-        internal static ExcelRangeTarget GetCell(this ExcelWorksheetTarget sheet, int row, int column)
+        internal static ExcelRangeTarget? GetCell(this ExcelWorksheetTarget sheet, int row, int column)
         {
 #if AOT
-            return (ExcelRangeTarget)sheet.Get("Cells", new object[] { row, column });
+            return (ExcelRangeTarget?)sheet?.Get("Cells", new object[] { row, column });
 #else
         return (ExcelRangeTarget)sheet.Cells[row, column];
 #endif
@@ -572,7 +577,7 @@ namespace ExcelDNAtest
         internal static string GetFontColorIndex(this ExcelRangeTarget range)
         {
 #if AOT
-            var font = (IDynamic)range.Get("Font");
+            var font = (IDynamic)range.Get("Font")!;
             return font.Get("ColorIndex")?.ToString() ?? "";
 #else
         return range.Font.ColorIndex?.ToString() ?? "";
@@ -582,7 +587,7 @@ namespace ExcelDNAtest
         internal static string GetInteriorColorIndex(this ExcelRangeTarget range)
         {
 #if AOT
-            var interior = (IDynamic)range.Get("Interior");
+            var interior = (IDynamic)range.Get("Interior")!;
             return interior.Get("ColorIndex")?.ToString() ?? "";
 #else
         return range.Interior.ColorIndex?.ToString() ?? "";
@@ -591,7 +596,7 @@ namespace ExcelDNAtest
         internal static void AddHyperlink(this ExcelRangeTarget range, string fileAddress, string screenTip, string textToDisplay)
         {
 #if AOT
-            var hyperlinks = (IDynamic)range.Get("Hyperlinks");
+            var hyperlinks = (IDynamic)range.Get("Hyperlinks")!;
             // I parametri posizionali di Excel per Hyperlinks.Add sono:
             // 1. Anchor (range)
             // 2. Address (fileAddress)
@@ -613,7 +618,7 @@ namespace ExcelDNAtest
         internal static ExcelRangeTarget? GetSelection(this ExcelAppTarget app)
         {
 #if AOT
-            object selection = app.Get("Selection");
+            object? selection = app.Get("Selection");
             return selection as ExcelRangeTarget;
 #else
         return app.Selection as Microsoft.Office.Interop.Excel.Range;
@@ -625,19 +630,19 @@ namespace ExcelDNAtest
         {
 #if AOT
             // Otteniamo il conteggio di righe e colonne per fare un ciclo for numerico pulito
-            var rowsObj = (IDynamic)range.Get("Rows");
-            int rows = (int)rowsObj.Get("Count");
+            var rowsObj = (IDynamic)range.Get("Rows")!;
+            int rows = (int)rowsObj.Get("Count")!;
 
-            var colsObj = (IDynamic)range.Get("Columns");
-            int cols = (int)colsObj.Get("Count");
+            var colsObj = (IDynamic)range.Get("Columns")!;
+            int cols = (int)colsObj.Get("Count")!;
 
-            var cellsObj = (IDynamic)range.Get("Cells");
+            var cellsObj = (IDynamic)range.Get("Cells")!;
 
             for (int r = 1; r <= rows; r++)
             {
                 for (int c = 1; c <= cols; c++)
                 {
-                    var cell = (ExcelRangeTarget)cellsObj.Get("Item", new object[] { r, c });
+                    var cell = (ExcelRangeTarget)cellsObj.Get("Item", new object[] { r, c })!;
                     action(cell);
                 }
             }
@@ -661,7 +666,7 @@ namespace ExcelDNAtest
         internal static ExcelWorkbookTarget? GetActiveWorkbook(this ExcelAppTarget app)
         {
 #if AOT
-            object wb = app.Get("ActiveWorkbook");
+            object? wb = app.Get("ActiveWorkbook");
             return wb as ExcelWorkbookTarget;
 #else
         return app.ActiveWorkbook;

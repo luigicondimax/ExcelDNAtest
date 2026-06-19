@@ -88,8 +88,8 @@ namespace ExcelDNAtest
             string nameKey = $"{originalMethodName}_Name";
             string descKey = $"{originalMethodName}_Desc";
 
-            string localizedName = resManager.GetString(nameKey, culture);
-            string localizedDesc = resManager.GetString(descKey, culture);
+            string? localizedName = resManager.GetString(nameKey, culture);
+            string? localizedDesc = resManager.GetString(descKey, culture);
 
             if (string.IsNullOrEmpty(localizedName))
             {
@@ -115,8 +115,8 @@ namespace ExcelDNAtest
                 string argNameKey = $"{originalMethodName}__arg{argumentNumber}_Name";
                 string argDescKey = $"{originalMethodName}__arg{argumentNumber}_Desc";
 
-                string localizedArgName = resManager.GetString(argNameKey, culture);
-                string localizedArgDesc = resManager.GetString(argDescKey, culture);
+                string? localizedArgName = resManager.GetString(argNameKey, culture);
+                string? localizedArgDesc = resManager.GetString(argDescKey, culture);
 
                 // 2. Fallback: Generic key search (e.g., __arg1_Name)
                 if (string.IsNullOrEmpty(localizedArgName))

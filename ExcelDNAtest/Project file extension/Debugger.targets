@@ -1,0 +1,12 @@
+﻿<Project>
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)64.xll</RunExcelDnaXll>
+		<ExcelDnaDebugger>managed</ExcelDnaDebugger>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT' Or '$(Configuration)' == 'ReleaseAOT'">
+		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\$(MSBuildProjectName)-AddIn64.xll</RunExcelDnaXll>
+		<ExcelDnaDebugger>native</ExcelDnaDebugger>
+	</PropertyGroup>
+</Project>
+
+

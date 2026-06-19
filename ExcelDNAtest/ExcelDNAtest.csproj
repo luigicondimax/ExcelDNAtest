@@ -36,10 +36,8 @@
 		<SelfContained>true</SelfContained>
 		<IsAotCompatible>true</IsAotCompatible>
 		<InvariantGlobalization>false</InvariantGlobalization>
-		
 		<PublishTrimmed>true</PublishTrimmed>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT'">
 		<SetNativeSymbols>true</SetNativeSymbols>
 		<PublishSymbols>true</PublishSymbols>
@@ -50,45 +48,27 @@
 		<IlcGenerateMsvcDebugInfo>true</IlcGenerateMsvcDebugInfo>
 		<OptimizationLevel>0</OptimizationLevel>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)' == 'ReleaseAOT'">
 		<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
 		<StripSymbols>true</StripSymbols>
 	</PropertyGroup>
 
-		<ItemGroup Condition="'$(Configuration)' == 'ReleaseAOT' OR '$(Configuration)' == 'DebugAOT'">
+	<!--Dependance for AOT e JIT-->
+	<ItemGroup Condition="'$(Configuration)' == 'ReleaseAOT' OR '$(Configuration)' == 'DebugAOT'">
 		<PackageReference Include="ExcelDna.AddIn.NativeAOT" Version="1.10.0-preview4" />
 		<TrimmerRootDescriptor Include="TrimmerRoots.xml" />
 	</ItemGroup>
-
-
 	<ItemGroup Condition="'$(Configuration)' != 'ReleaseAOT' And '$(Configuration)' != 'DebugAOT'">
 		<PackageReference Include="ExcelDna.AddIn" Version="1.10.0-preview4" />
 		<PackageReference Include="ExcelDna.IntelliSense" Version="1.10.0-preview4" />
 	</ItemGroup>
 
-	<Target Name="AutoPublishAotRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'ReleaseAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
-		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso ..." />
-		<Exec Command="dotnet publish -c ReleaseAOT /p:IsPublishing=true" />
-	</Target>
-	<Target Name="AutoPublishAotDebug" AfterTargets="Build" Condition="'$(Configuration)' == 'DebugAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
-		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso ..." />
-		<Exec Command="dotnet publish -c DebugAOT /p:IsPublishing=true" />
-	</Target>
+	<!--Create AOT 32 and 64 bit and installer -->
+	<Import Project="Project file extension\CreateAOTandInstaller.targets" />
 
-	<PropertyGroup>
-		<ExcelDnaFileName>$(MSBuildProjectName)64.xll</ExcelDnaFileName>
-	</PropertyGroup>
+	<!-- Debugger -->
+	<Import Project="Project file extension\Debugger.targets" />
 
-	<PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
-		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)64.xll</RunExcelDnaXll>
-		<ExcelDnaDebugger>managed</ExcelDnaDebugger>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)' == 'DebugAOT' Or '$(Configuration)' == 'ReleaseAOT'">
-		<RunExcelDnaXll>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\$(MSBuildProjectName)-AddIn64.xll</RunExcelDnaXll>
-		<ExcelDnaDebugger>native</ExcelDnaDebugger>
-	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="12.0.4" />
@@ -103,9 +83,9 @@
 			<DependentUpon>FormSettings.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Resources\ReservedFunction.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>ReservedFunction.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ReservedFunction.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Resources\SettingsResources.it.Designer.cs">
 			<DesignTime>True</DesignTime>
@@ -121,8 +101,8 @@
 
 	<ItemGroup>
 		<EmbeddedResource Update="Resources\ReservedFunction.resx">
-		  <Generator>ResXFileCodeGenerator</Generator>
-		  <LastGenOutput>ReservedFunction.Designer.cs</LastGenOutput>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>ReservedFunction.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Resources\SettingsResources.it.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
@@ -142,6 +122,5 @@
 	<ItemGroup>
 		<Folder Include="Properties\" />
 	</ItemGroup>
-
 
 </Project>

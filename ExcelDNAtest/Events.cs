@@ -53,7 +53,9 @@ namespace ExcelDNAtest
             try
             {
 #if AOT
-                string xllDirectory = Path.GetDirectoryName(ExcelDnaUtil.XllPath);
+                //		<NativeLibrary Include="av_libglesv2.dll" />
+
+                string xllDirectory = Path.GetDirectoryName(ExcelDnaUtil.XllPath)!;
                 string skiaDllPath = Path.Combine(xllDirectory, "libSkiaSharp.dll");
                 string avDllPath = Path.Combine(xllDirectory, "av_libglesv2.dll");
                 string harfBuzzDllPath = Path.Combine(xllDirectory, "libHarfBuzzSharp.dll"); // <-- NUOVA
@@ -131,7 +133,8 @@ namespace ExcelDNAtest
             IntelliSenseServer.Uninstall();
 #endif
         }
-        public async void CreateMsg()
+        [ExcelCommand]
+        public static async void CreateMsg()
         {
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {

@@ -1,0 +1,35 @@
+﻿<Project>
+	<!-- Create AOT 32 and 64 bit -->
+	<Target Name="AutoPublishAotRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'ReleaseAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
+		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT (64-bit) in corso..." />
+		<Exec Command="dotnet publish -c ReleaseAOT /p:IsPublishing=true -r win-x64" />
+
+		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT (32-bit) in corso..." />
+		<Exec Command="dotnet publish -c ReleaseAOT /p:IsPublishing=true -r win-x86" />
+
+		<!-- Call create installer for AOT build -->
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="EseguiInnoSetup" Properties="IsAotBuild=true" />
+	</Target>
+	<Target Name="AutoPublishAotDebug" AfterTargets="Build" Condition="'$(Configuration)' == 'DebugAOT' And '$(BuildingInsideVisualStudio)' == 'true' And '$(IsPublishing)' != 'true'">
+		<Message Importance="High" Text="[ExcelDNA AOT] Compilazione Native AOT in corso ..." />
+		<Exec Command="dotnet publish -c DebugAOT /p:IsPublishing=true" />
+	</Target>
+
+	<!-- Create installer -->
+	<Target Name="EseguiInnoSetup">
+		<PropertyGroup>
+			<InnoCompiler>"C:\Program Files (x86)\Inno Setup 6\ISCC.exe"</InnoCompiler>
+			<InnoScriptPath>$(MSBuildProjectDirectory)\Inno Setup\Installer.iss</InnoScriptPath>
+			<ReleasePath>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)</ReleasePath>
+			<XllName>$(MSBuildProjectName)</XllName>
+			<IsAotBuild Condition="'$(IsAotBuild)' == ''">false</IsAotBuild>
+		</PropertyGroup>
+		<Message Importance="High" Text="[InnoSetup] Generazione Installer Unico (Configurazione: $(Configuration) | IsAOT: $(IsAotBuild))..." />
+		<Exec Command="$(InnoCompiler) /DIsAOT=$(IsAotBuild) /DReleasePath=&quot;$(ReleasePath)&quot; /DXllName=&quot;$(XllName)&quot; /DAppName=&quot;$(MSBuildProjectName)&quot; &quot;$(InnoScriptPath)&quot;" />
+	</Target>
+	
+	<!-- Call create installer for JIT -->
+	<Target Name="TriggerInnoSetupStandard" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="EseguiInnoSetup" Properties="IsAotBuild=false" />
+	</Target>
+</Project>
