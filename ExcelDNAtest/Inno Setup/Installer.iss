@@ -68,7 +68,7 @@ CloseApplications=yes
 SetupIconFile={#ResourcePath}company.ico
 UninstallDisplayIcon={#ResourcePath}company.ico
 LicenseFile={#ResourcePath}product_License.rtf
-WizardSmallImageFile={#ResourcePath}company2.ico
+;WizardSmallImageFile={#ResourcePath}company2.ico
 
 ; Output
 OutputDir={#OutputPath}
