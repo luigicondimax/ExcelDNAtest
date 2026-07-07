@@ -96,7 +96,7 @@ namespace ExcelDNAtest
                 Trace.TraceError("Nessuna lingua selezionata, impostazione non aggiornata.");
             }
 
-            RibbonController.myRibbon.InvalidateRibbon();
+            RibbonController.myRibbon?.Invalidate();
 
 
             var titolo = SettingsResources.Lingua_aggiornata;

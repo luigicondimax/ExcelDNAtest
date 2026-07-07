@@ -5,7 +5,7 @@ global using ExcelWorksheetTarget = ExcelDna.Integration.IDynamic;
 global using ExcelRangeTarget = ExcelDna.Integration.IDynamic;
 global using ExcelChartTarget = ExcelDna.Integration.IDynamic;
 global using RibbonControlTarget = ExcelDna.Integration.CustomUI.RibbonControl;
-global using RibbonUITarget = System.Object;
+global using RibbonUITarget = ExcelDna.Integration.CustomUI.RibbonUI;
 #else
 global using ExcelAppTarget = Microsoft.Office.Interop.Excel.Application;
 global using ExcelWorkbookTarget = Microsoft.Office.Interop.Excel.Workbook;
@@ -732,40 +732,6 @@ namespace ExcelDNAtest
 #endif
         }
 
-        public static void InvalidateRibbon(this RibbonUITarget? ribbon)
-        {
-            if (ribbon == null) return;
 
-#if AOT
-            if (ribbon is ExcelDna.Integration.IDynamic dynamicRibbon)
-            {
-                dynamicRibbon.Invoke("Invalidate", Array.Empty<object>());
-            }
-            else
-            {
-                System.Diagnostics.Trace.WriteLine("La Ribbon non implementa IDynamic.");
-            }
-            #else
-        ribbon.Invalidate();
-#endif
-        }
-
-        public static void InvalidateControlRibbon(this RibbonUITarget? ribbon, string controlId)
-        {
-            if (ribbon == null) return;
-
-#if AOT
-            if (ribbon is ExcelDna.Integration.IDynamic dynamicRibbon)
-            {
-                dynamicRibbon.Invoke("InvalidateControl", new object[] { controlId });
-            }
-            else
-            {
-                System.Diagnostics.Trace.WriteLine("La Ribbon non implementa IDynamic.");
-            }
-#else
-        ribbon.InvalidateControl(controlId);
-#endif
-        }
     }
 }

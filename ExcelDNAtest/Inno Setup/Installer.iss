@@ -11,7 +11,7 @@
   #define ReleasePath32 ReleasePath + "\win-x86\publish"
   #define ReleasePath64 ReleasePath + "\win-x64\publish"
 
-  #define AppDll32 XllName + "-AddIn64.xll" ; TO CHECK
+  #define AppDll32 XllName + "-AddIn.xll" ;
   #define AppDll64 XllName + "-AddIn64.xll"
 #else
   #define ReleasePath32 ReleasePath + "\publish"

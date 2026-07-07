@@ -4,23 +4,20 @@ using ExcelDNAtest.Resources;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System.Diagnostics;
-using System.Resources;
-using System.Runtime.InteropServices;
-
 
 namespace ExcelDNAtest
 {
     // https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2007/aa722523(v=office.12)
 
-    [ComVisible(true)]
-    public class RibbonController :
 #if AOT
-    IExcelRibbon
+    public class RibbonController :IExcelRibbon
 #else
-    ExcelRibbon
-#endif    
+    [ComVisible(true)]
+    public class RibbonController : ExcelRibbon
+#endif
+
     {
-        internal static RibbonUITarget? myRibbon;
+        internal static RibbonUI? myRibbon;
 
 #if !AOT
         public override string GetCustomUI(string RibbonID)
@@ -75,13 +72,9 @@ namespace ExcelDNAtest
             return true;
         }
 
-        public void ribbonLoaded(RibbonUITarget ribbon)
+        public void ribbonLoaded(RibbonUI ribbon)
         {
             // the only cast possible but is empty
-            //if (ribbon is ExcelDna.Integration.CustomUI.RibbonControl rc)
-            //{
-
-            //}
             myRibbon = ribbon;
         }
 
@@ -136,7 +129,7 @@ namespace ExcelDNAtest
         }
         public async void InvalidateForm(RibbonControlTarget control)
         {
-            myRibbon.InvalidateRibbon();
+            myRibbon?.Invalidate();
         }
 
     }

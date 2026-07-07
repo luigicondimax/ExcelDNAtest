@@ -2,6 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0-windows</TargetFramework>
+		
+		<RuntimeFrameworkVersion>10.0.0</RuntimeFrameworkVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release;DebugAOT;ReleaseAOT</Configurations>
@@ -55,12 +60,12 @@
 
 	<!--Dependance for AOT e JIT-->
 	<ItemGroup Condition="'$(Configuration)' == 'ReleaseAOT' OR '$(Configuration)' == 'DebugAOT'">
-		<PackageReference Include="ExcelDna.AddIn.NativeAOT" Version="1.10.0-preview4" />
+		<PackageReference Include="ExcelDna.AddIn.NativeAOT" Version="1.10.0-preview5" />
 		<TrimmerRootDescriptor Include="TrimmerRoots.xml" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(Configuration)' != 'ReleaseAOT' And '$(Configuration)' != 'DebugAOT'">
-		<PackageReference Include="ExcelDna.AddIn" Version="1.10.0-preview4" />
-		<PackageReference Include="ExcelDna.IntelliSense" Version="1.10.0-preview4" />
+		<PackageReference Include="ExcelDna.AddIn" Version="1.10.0-preview5" />
+		<PackageReference Include="ExcelDna.IntelliSense" Version="1.10.0-preview5" />
 	</ItemGroup>
 
 	<!--Create AOT 32 and 64 bit and installer -->
@@ -71,9 +76,9 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="12.0.4" />
-		<PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+		<PackageReference Include="Avalonia" Version="12.0.5" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.0.5" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.5" />
 		<PackageReference Include="ExcelDna.Interop" Version="15.0.1" />
 		<PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
 	</ItemGroup>
