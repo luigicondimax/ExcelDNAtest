@@ -4,7 +4,7 @@
 		<TargetFramework>net10.0-windows</TargetFramework>
 		
 		<RuntimeFrameworkVersion>10.0.0</RuntimeFrameworkVersion>
-		<EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 
 		<ImplicitUsings>enable</ImplicitUsings>
