@@ -8,10 +8,9 @@ namespace ExcelDNAtest
     internal class ReservedFunction
     {
         [ExcelFunction(ExplicitRegistration = true)]
-        public static string DynamicRegistrationTest()
+        internal static string DynamicRegistrationTest()
         {
             return "Hello world from reserved!";
         }
-
     }
 }

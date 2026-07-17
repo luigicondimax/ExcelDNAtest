@@ -4,6 +4,7 @@ using ExcelDNAtest.Resources;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace ExcelDNAtest
 {
@@ -17,7 +18,7 @@ namespace ExcelDNAtest
 #endif
 
     {
-        internal static RibbonUI? myRibbon;
+        internal static RibbonUITarget? myRibbon;
 
 #if !AOT
         public override string GetCustomUI(string RibbonID)
@@ -72,7 +73,7 @@ namespace ExcelDNAtest
             return true;
         }
 
-        public void ribbonLoaded(RibbonUI ribbon)
+        public void ribbonLoaded(RibbonUITarget ribbon)
         {
             // the only cast possible but is empty
             myRibbon = ribbon;

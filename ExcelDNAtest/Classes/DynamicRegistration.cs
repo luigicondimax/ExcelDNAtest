@@ -28,7 +28,8 @@ namespace ExcelDNAtest
 
             // Optimized Reflection using C# Property Pattern Matching
             var licensedMethods = typeof(ReservedFunction)
-                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .GetMethods(BindingFlags.NonPublic | BindingFlags.Static) // Cerca i metodi statici non pubblici
+                .Where(m => m.IsAssembly) // FILTRA: Tiene SOLO quelli 'internal' (esclude private e protected)
                 .Where(m => m.GetCustomAttribute<ExcelFunctionAttribute>() is { ExplicitRegistration: true })
                 .ToList();
 

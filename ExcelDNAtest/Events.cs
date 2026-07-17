@@ -58,7 +58,7 @@ namespace ExcelDNAtest
                 string xllDirectory = Path.GetDirectoryName(ExcelDnaUtil.XllPath)!;
                 string skiaDllPath = Path.Combine(xllDirectory, "libSkiaSharp.dll");
                 string avDllPath = Path.Combine(xllDirectory, "av_libglesv2.dll");
-                string harfBuzzDllPath = Path.Combine(xllDirectory, "libHarfBuzzSharp.dll"); // <-- NUOVA
+                string harfBuzzDllPath = Path.Combine(xllDirectory, "libHarfBuzzSharp.dll");
 
                 // Forza il caricamento in memoria di libSkiaSharp.dll
                 if (File.Exists(skiaDllPath))
