@@ -20,7 +20,7 @@
 
 		<ExcelDnaPackNativeLibraryDependencies>true</ExcelDnaPackNativeLibraryDependencies>
 		<ExcelDnaPackManagedDependencies>true</ExcelDnaPackManagedDependencies>
-		<ExcelAddInExplicitRegistration>true</ExcelAddInExplicitRegistration>
+		<ExcelAddInExplicitRegistration>false</ExcelAddInExplicitRegistration>
 		<RunExcelDnaSetDebuggerOptions>false</RunExcelDnaSetDebuggerOptions>
 
 		<!--
