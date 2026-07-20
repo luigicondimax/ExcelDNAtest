@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
+using static ExcelDNAtest.Classes.Utility;
 
 namespace ExcelDNAtest
 {
@@ -40,20 +41,14 @@ namespace ExcelDNAtest
             ParameterConversionConfiguration conversionConfig;
             conversionConfig = new ParameterConversionConfiguration().AddParameterConversion(ParameterConversions.GetOptionalConversion(treatEmptyAsMissing: true));
 
-            if (imp.Language is not null)
-            {
-                var culture = CultureInfo.GetCultureInfoByIetfLanguageTag(imp.Language);
-                CultureInfo.CurrentCulture = culture;
-                CultureInfo.CurrentUICulture = culture;
-                CultureInfo.DefaultThreadCurrentCulture = culture;
-                CultureInfo.DefaultThreadCurrentUICulture = culture;
-            }
+            ChangeLanguage();
+
             Trace.TraceInformation($"CurrentUICulture: {CultureInfo.CurrentUICulture}");
 
             try
             {
 #if AOT
-                //		<NativeLibrary Include="av_libglesv2.dll" />
+                //<NativeLibrary Include="av_libglesv2.dll" />
 
                 string xllDirectory = Path.GetDirectoryName(ExcelDnaUtil.XllPath)!;
                 string skiaDllPath = Path.Combine(xllDirectory, "libSkiaSharp.dll");

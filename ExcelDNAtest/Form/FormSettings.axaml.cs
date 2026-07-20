@@ -7,6 +7,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System.Diagnostics;
 using System.Globalization;
+using static ExcelDNAtest.Classes.Utility;
 
 namespace ExcelDNAtest
 {
@@ -16,17 +17,7 @@ namespace ExcelDNAtest
 
         public FormSettings()
         {
-            string? languageSaved = _settings.Language;
-            if (!string.IsNullOrEmpty(languageSaved))
-            {
-                var culture = CultureInfo.GetCultureInfoByIetfLanguageTag(languageSaved);
-
-                CultureInfo.CurrentCulture = culture;
-                CultureInfo.CurrentUICulture = culture;
-
-                CultureInfo.DefaultThreadCurrentCulture = culture;
-                CultureInfo.DefaultThreadCurrentUICulture = culture;
-            }
+            ChangeLanguage();
 
             InitializeComponent();
 
@@ -85,11 +76,7 @@ namespace ExcelDNAtest
                 _settings.Language = voceSelezionata.Codice;
                 SettingsManager.Save();
 
-                var culture = CultureInfo.GetCultureInfoByIetfLanguageTag(voceSelezionata.Codice);
-                CultureInfo.CurrentCulture = culture;
-                CultureInfo.CurrentUICulture = culture;
-                CultureInfo.DefaultThreadCurrentCulture = culture;
-                CultureInfo.DefaultThreadCurrentUICulture = culture;
+                ChangeLanguage();
             }
             else
             {
