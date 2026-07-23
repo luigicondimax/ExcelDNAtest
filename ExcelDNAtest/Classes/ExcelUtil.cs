@@ -25,7 +25,7 @@ namespace ExcelDNAtest
 {
     internal static class ExcelUtil
     {
-        internal static ExcelReference? Caller()
+        internal static ExcelReference? getCaller()
         {
             return XlCall.Excel(XlCall.xlfCaller) as ExcelReference;
         }
